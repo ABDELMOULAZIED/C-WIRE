@@ -107,23 +107,41 @@ recup_donne(){
 	case "$arg_fus" in
 		"hvb comp")
 		if [ -z "$arg4" ];then
-			station=$(grep  -P "^(\d+);(\d+);-;-;-;-;(\d+);-" $arg1)
+			station1=$(grep  -P "^(\d+);(\d+);-;-;-;-;(\d+);-" $arg1)
+			station2=$(grep  -P "^(\d+);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
+			station3=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^(\d+);(\d+);-;-;(\d+);-;-;(\d+)" $arg1)
+			usagers2=$(grep  -P "^(\d+);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
+			usagers3=$(grep  -P "^(\d+);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
 		
 		else
 			station=$(grep  -P "^($arg4);(\d+);-;-;-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^($arg4);(\d+);-;-;(\d+);-;-;(\d+)" $arg1)
+			station2=$(grep  -P "^($arg4);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
+			usagers2=$(grep  -P "^($arg4);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
+			station3=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
+			usagers3=$(grep  -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
 		fi
+		station="$station1\n$station2\n$station3"
+		usager="$usagers1\n$usagers2\n$usagers3"
 		;;
 		"hva comp")
 		if [ -z "$arg4" ];then
-			station=$(grep  -P "^(\d+);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^(\d+);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
+			station1=$(grep  -P "^(\d+);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
+			usagers1=$(grep  -P "^(\d+);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
+			station2=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
+			usagers2=$(grep  -P "^(\d+);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
+			usagers3=$(grep  -P "^(\d+);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
 		else
-			station=$(grep  -P "^($arg4);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^($arg4);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
+			station1=$(grep  -P "^($arg4);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
+			usagers1=$(grep  -P "^($arg4);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
+			station2=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
+			usagers2=$(grep  -P "^($arg4);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
+			usagers3=$(grep  -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
 		
 		fi
+		station="$station1\n$station2"
+		usager="$usagers1\n$usagers2\n$usagers3"
 		;;
 		"lv comp")
 		if [ -z "$arg4" ];then
