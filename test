@@ -213,6 +213,16 @@ timer "Écriture des données dans le fichier temporaire" "ecriture"
 Recuperation des données - = 0 ;
 int = int ;
 
+
+NoeudAVL * creerNoeud(NoeudAVL * f, char *elt){
+	if (f==NULL){
+		f = (NoeudAVL *)malloc(sizeof(NoeudAVL))
+		f->ID = elt[];
+		f->conso
+	}
+
+}
+
 int main(){
 	FILE * file = fopen("tmp/temp.txt", "r");
 	char ligne[256];
@@ -235,9 +245,9 @@ int main(){
 		printf("%s\n",ligne);
 		for (int i ; i<8 ; i++ ){
 			valeur = atoi(element[i]);
-			printf("%d\n",valeur);
+			element[i] = valeur;
 		
-		}
+	}
 	fclose(file);
 }
 
