@@ -208,4 +208,38 @@ timer "Récuperation des données" "recup_donne"
 timer "Écriture des données dans le fichier temporaire" "ecriture"
 
 
+//// Code C
+
+Recuperation des données - = 0 ;
+int = int ;
+
+int main(){
+	FILE * file = fopen("tmp/temp.txt", "r");
+	char ligne[256];
+	char *elt1 = (char*)malloc(sizeof(char));
+	char *elt2 = (char*)malloc(sizeof(char));
+	char *elt3 = (char*)malloc(sizeof(char));
+	char *elt4 = (char*)malloc(sizeof(char));
+	char *elt5 = (char*)malloc(sizeof(char));
+	char *elt6 = (char*)malloc(sizeof(char));
+	char *elt7 = (char*)malloc(sizeof(char));
+	char *elt8 = (char*)malloc(sizeof(char));
+	if (file == NULL){
+		perror("Erreur");
+		return EXIT_FAILURE;
+	}
+	fgets(ligne,sizeof(ligne),file);
+		sscanf(ligne,"%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;]",elt1, elt2, elt3, elt4, elt5, elt6, elt7, elt8);
+		char *element[] = {elt1,elt2,elt3,elt4,elt5,elt6,elt7,elt8};
+		int valeur;
+		printf("%s\n",ligne);
+		for (int i ; i<8 ; i++ ){
+			valeur = atoi(element[i]);
+			printf("%d\n",valeur);
+		
+		}
+	fclose(file);
+}
+
+
 
