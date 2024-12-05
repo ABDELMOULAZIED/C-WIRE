@@ -107,6 +107,7 @@ recup_donne(){
 	case "$arg_fus" in
 		"hvb comp")
 		if [ -z "$arg4" ];then
+			station0=$(grep  -P "^(\d+);-;-;-;-;-;(\d+);-" $arg1)
 			station1=$(grep  -P "^(\d+);(\d+);-;-;-;-;(\d+);-" $arg1)
 			station2=$(grep  -P "^(\d+);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
 			station3=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
@@ -115,24 +116,27 @@ recup_donne(){
 			usagers3=$(grep  -P "^(\d+);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
 		
 		else
-			station=$(grep  -P "^($arg4);(\d+);-;-;-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^($arg4);(\d+);-;-;(\d+);-;-;(\d+)" $arg1)
+			station0=$(grep  -P "^($arg4);-;-;-;-;-;(\d+);-" $arg1)
+			station1=$(grep  -P "^($arg4);(\d+);-;-;-;-;(\d+);-" $arg1)
+			usagers1=$(grep  -P "^($arg4);(\d+);-;-;(\d+);-;-;(\d+)" $arg1)
 			station2=$(grep  -P "^($arg4);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
 			usagers2=$(grep  -P "^($arg4);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
 			station3=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers3=$(grep  -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
 		fi
-		station="$station1\n$station2\n$station3"
-		usager="$usagers1\n$usagers2\n$usagers3"
+		station="$station0\n$station1\n$station2\n$station3"
+		usagers="$usagers1\n$usagers2\n$usagers3"
 		;;
 		"hva comp")
 		if [ -z "$arg4" ];then
+			station0=$(grep  -P "^(\d+);-;-;-;-;-;(\d+);-" $arg1)
 			station1=$(grep  -P "^(\d+);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
 			usagers1=$(grep  -P "^(\d+);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
 			station2=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers2=$(grep  -P "^(\d+);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
 			usagers3=$(grep  -P "^(\d+);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
 		else
+			station0=$(grep  -P "^($arg4);-;-;-;-;-;(\d+);-" $arg1)
 			station1=$(grep  -P "^($arg4);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
 			usagers1=$(grep  -P "^($arg4);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
 			station2=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
@@ -140,43 +144,53 @@ recup_donne(){
 			usagers3=$(grep  -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
 		
 		fi
-		station="$station1\n$station2"
-		usager="$usagers1\n$usagers2\n$usagers3"
+		station="$station0\n$station1\n$station2"
+		usagers="$usagers1\n$usagers2\n$usagers3"
 		;;
 		"lv comp")
 		if [ -z "$arg4" ];then
+			station0=$(grep  -P "^(\d+);-;-;-;-;-;(\d+);-" $arg1)
 			station=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^(\d+);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
 		else
+			station0=$(grep  -P "^($arg4);-;-;-;-;-;(\d+);-" $arg1)
 			station=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^($arg4);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
 		
 		fi
+		station="$station0\n$station"
 		;;
 		"lv indiv")
 		if [ -z "$arg4" ];then
+			station0=$(grep  -P "^(\d+);-;-;-;-;-;(\d+);-" $arg1)
 			station=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^(\d+);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
 		else 
+			station0=$(grep  -P "^($arg4);-;-;-;-;-;(\d+);-" $arg1)
 			station=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
 		
 		fi
+		station="$station0\n$station"
 		;;
 		"lv all")
 		if [ -z "$arg4" ];then
+			station0=$(grep  -P "^(\d+);-;-;-;-;-;(\d+);-" $arg1)
 			station=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers_1=$(grep  -P "^(\d+);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
 			usagers_2=$(grep  -P "^(\d+);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
 		else
+			station0=$(grep  -P "^($arg4);-;-;-;-;-;(\d+);-" $arg1)
 			station=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers_1=$(grep  -P "^($arg4);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
 			usagers_2=$(grep  -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
 		fi
+		station="$station0\n$station"
 		usagers="$usagers_1\n$usagers_2"
 		;;
 	esac
 }
+
 
 # Calcul le temps d'exécution d'une fonction passé en paramètre
 timer(){
@@ -209,8 +223,10 @@ timer(){
 
 
 ecriture(){
-	touch tmp/temp
-	echo -e "$station\n\n$usagers" > tmp/temp
+	touch tmp/temp_station.txt
+	echo -e "$station" > tmp/temp_station.txt
+	touch tmp/temp_usager.txt
+	echo -e "$usagers" > tmp/temp_usager.txt	
 
 }
 
@@ -223,6 +239,3 @@ timer "Vérification" "verif"
 timer "Création des dossiers" "crea_doss"
 timer "Récuperation des données" "recup_donne"
 timer "Écriture des données dans le fichier temporaire" "ecriture"
-
-
-
