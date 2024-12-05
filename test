@@ -27,7 +27,6 @@ done
 
 
 
-
 # Vérification des paramètres d'entré 
 verif(){
 
@@ -191,6 +190,7 @@ recup_donne(){
 		;;
 	esac
 }
+
 
 # Calcul le temps d'exécution d'une fonction passé en paramètre
 timer(){
