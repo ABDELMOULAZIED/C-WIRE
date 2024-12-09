@@ -2,6 +2,7 @@ Reste a faire :
 - Renommer les variables et/ou annotations (faite par chatgpt) , souvent hors sujet pcq je me perd dans ce que je fait comme les fonction lire qui en fait ne font pas que lire 
 - Separer le code AVL.h AVL.c etc...
 - Verifier la robustesse du code.
+- Verifier les demandes du projet
 
 
 #include <stdio.h>
