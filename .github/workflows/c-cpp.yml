@@ -24,4 +24,4 @@ jobs:
 
       # Étape 4 : Exécuter le script
       - name: Run bash script
-        run: ./c-wire.sh  # Exécuter le script
+        run: ./c-wire.sh c-wire_v00.dat hvb comp
