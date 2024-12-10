@@ -95,15 +95,6 @@ void lire_fichier_consommateur(FILE *fic, NoeudAVL *n) {
     free(elt8);
 }
 
-void parcours_pre(NoeudAVL * n){
-  if (n==NULL){
-    return ;
-  }
-  printf("%d;%lld;%lld\n", n->id,n->capacite,n->consommation);
-  parcours_prefixe(n->gauche);
-  parcours_prefixe(n->droite);
-
-}
 
 int main() {
     FILE *file = fopen("tmp/temp_station.txt", "r");
