@@ -27,7 +27,7 @@ NoeudAVL * lire_fichier_station(FILE *fic) {
         // Vérification si tous les champs ont été lus correctement
         if (items_read == 8) {
             char *element[] = {elt1, elt2, elt3, elt4, elt5, elt6, elt7, elt8};
-              n = creerNoeud(element);
+              n = creerNoeudAVL(element);
         } else {
             printf("Erreur de format dans la ligne: %s\n", ligne);
         }
@@ -105,7 +105,7 @@ int main() {
     NoeudAVL *n = NULL;
     NoeudAVL *temp = lire_fichier_station(file);
     while (temp != NULL) {
-        n = inserer(n, temp);
+        n = insererAVL(n, temp);
         temp = lire_fichier_station(file);
     }
     fclose(file);
@@ -118,7 +118,7 @@ int main() {
     }
     // Lire les usagers et modifier l'AVL
     lire_fichier_consommateur(file2, n);
-    parcours_prefixe(n);
+    parcoursPrefixe(n);
     fclose(file2);
     free_Arbre(n);
 
