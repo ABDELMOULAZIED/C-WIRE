@@ -20,4 +20,4 @@ jobs:
         run: chmod 700 c-wire.sh
 
       - name: Run bash script
-        run: ./c-wire.sh
+        run: ./c-wire.sh c-wire_v00.dat hvb comp
