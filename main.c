@@ -215,7 +215,7 @@ void parcours_pre(NoeudAVL * n){
   if (n==NULL){
     return ;
   }
-  printf("Id :%d , Capacité :%lld , hauteur : %d , Consommation : %lld\n", n->id,n->capacite,n->hauteur,n->consommation);
+  printf("%d;%lld;%lld\n", n->id,n->capacite,n->consommation);
   parcours_pre(n->gauche);
   parcours_pre(n->droite);
 
