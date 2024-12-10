@@ -1,0 +1,60 @@
+parbre equilibrage(parbre a){
+
+    // Rotation si l'arbre est déséquilibré
+        if (a->fe == 2) {
+            if (a->fd->fe >= 0) {
+                // Cas droite-droite (RR)
+                return RotationGauche(a);
+            } else {
+                // Cas droite-gauche (RL)
+                return RotationDroiteGauche(a);
+            }
+        } else if (a->fe == -2) {
+            if (a->fg->fe <= 0) {
+                // Cas gauche-gauche (LL)
+                return RotationDroite(a);
+            } else {
+                // Cas gauche-droite (LR)===============
+                return RotationGaucheDroite(a);
+            }
+        }
+
+    return a;
+}
+
+
+
+parbre insertionAVL(parbre a, int valeur, int* h) {
+    if (a == NULL) {
+        *h = 1; // L'arbre augmente en hauteur car un nouveau nœud est ajouté
+        return cree_arbre(valeur);
+    }
+
+    if (valeur < a->value) {
+        // Insertion dans le sous-arbre gauche
+        a->fg = insertionAVL(a->fg, valeur, h);
+        *h = -*h; // Inverse la hauteur car l'arbre a changé à gauche
+    } else if (valeur > a->value) {
+        // Insertion dans le sous-arbre droit
+        a->fd = insertionAVL(a->fd, valeur, h);
+    } else {
+        *h = 0; // Pas de changement si la valeur existe déjà
+        return a;
+    }
+
+    // Mise à jour du facteur d'équilibre
+    if (*h != 0) {
+        a->fe += *h;
+
+        a = equilibrage(a);//on vérifie si l'arbe est équilibré
+
+        // Mise à jour de la hauteur
+        if (a->fe == 0) {
+            *h = 0; // L'arbre est équilibré, donc la hauteur ne change pas
+        } else {
+            *h = 1; // La hauteur de l'arbre augmente
+        }
+    }
+
+    return a;
+}
