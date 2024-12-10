@@ -1,7 +1,7 @@
 #ifndef AVL.H
 #define AVL.H
 
-
+// Structure pour représenter un nœud de l'arbre AVL
 typedef struct node{
   int id;
   int id_centrale;
