@@ -91,40 +91,27 @@ NoeudAVL *equilibrer(NoeudAVL *a) { // Code de zied pour l'équilibre
     return a;
 }
 
-NoeudAVL* inserer(NoeudAVL* n, NoeudAVL* nouveau) {
-    if (n == NULL) {
+
+NoeudAVL *insererAVL(NoeudAVL *racine, NoeudAVL *nouveau) {
+    if (racine == NULL) {
         return nouveau;
     }
-    if (nouveau->id < n->id) {
-        n->gauche = inserer(n->gauche, nouveau);
-    } else if (nouveau->id > n->id) {
-        n->droite = inserer(n->droite, nouveau);
+
+    if (nouveau->id < racine->id) {
+        racine->gauche = insererAVL(racine->gauche, nouveau);
+    } else if (nouveau->id > racine->id) {
+        racine->droite = insererAVL(racine->droite, nouveau);
     } else {
-        return n;
+        return racine;
     }
-    // Mise à jour de la hauteur du nœud courant.
-    n->hauteur = 1 + max((n->gauche ? n->gauche->hauteur : -1),(n->droite ? n->droite->hauteur : -1));
-    // Calcul du facteur d'équilibre (droite - gauche)
-    int balance = (n->droite ? n->droite->hauteur : -1) - (n->gauche ? n->gauche->hauteur : -1);
-    // Cas 1 : Déséquilibre à droite.
-    if (balance > 1 && nouveau->id > n->droite->id) {
-        return rotationGauche(n);
-    }
-    // Cas 2 : Déséquilibre à gauche.
-    if (balance < -1 && nouveau->id < n->gauche->id) {
-        return rotationDroite(n);
-    }
-    // Cas 3 : Déséquilibre droite-gauche.
-    if (balance > 1 && nouveau->id < n->droite->id) {
-        n->droite = rotationDroite(n->droite);
-        return rotationGauche(n);
-    }
-    // Cas 4 : Déséquilibre gauche-droite.
-    if (balance < -1 && nouveau->id > n->gauche->id) {
-        n->gauche = rotationGauche(n->gauche);
-        return rotationDroite(n);
-    }
-    return n; // Retourne la nouvelle racine locale.
+
+    racine->hauteur = 1 + max((racine->gauche ? racine->gauche->hauteur : -1),
+                              (racine->droite ? racine->droite->hauteur : -1));
+
+    // Équilibrage
+    racine = equilibrer(racine); // ce qu'on avait fait avec balance ca marchait pas quand on lance le programme
+
+    return racine;
 }
 
 NoeudAVL *rechercher(NoeudAVL *racine, int id) {
