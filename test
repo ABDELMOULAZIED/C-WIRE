@@ -229,11 +229,54 @@ arg2="$2"
 arg3="$3"
 arg4="$4"
 
-timer "Vérification" "verif"
-timer "Création des dossiers" "crea_doss"
-timer "Récuperation des données" "recup_donne"
-timer "Écriture des données dans le fichier temporaire" "ecriture"
+barre_de_progression() {
+    local nombre_total_etapes="$2"
+    local etape_actuelle="$1"
+    local progression=$((etape_actuelle * 100 / nombre_total_etapes)) #Pourcentage de progression
+    local longueur_barre=20  #Longueur de la barre de progression
+    local longueur_remplie=$((etape_actuelle * longueur_barre / nombre_total_etapes)) #Partie de la barre de progression censée être remplie 
+
+    # Construire la barre de progression
+    local barre=""
+    for ((i=0; i<longueur_remplie; i++)); do
+        barre="$barre#" #On ajoute ici des # pour chaque partie remplie de la barre.
+    done
+    for ((i=longueur_remplie; i<longueur_barre; i++)); do
+        barre="$barre-" #On rajoute des - la ou la barre de progression est vide.
+    done
+
+    # Afficher la barre de progression
+    printf "\r[%s] %d%% " "$barre" "$progression"
+}
+
+nombre_total_etapes=5
+etape_actuelle=0
+
+
+etape_actuelle=$((etape_actuelle + 1))
+barre_de_progression $etape_actuelle $nombre_total_etapes
+timer "Durée de la vérification des arguments" "verif"
+
+
+etape_actuelle=$((etape_actuelle + 1))
+barre_de_progression $etape_actuelle $nombre_total_etapes
+timer "Durée de la création des dossiers" "crea_doss"
+
+
+etape_actuelle=$((etape_actuelle + 1))
+barre_de_progression $etape_actuelle $nombre_total_etapes
+timer "Durée de la récupération des données" "recup_donne"
+
+
+etape_actuelle=$((etape_actuelle + 1))
+barre_de_progression $etape_actuelle $nombre_total_etapes
+timer "Durée de l'écriture des fichiers temporaires" "ecriture"
+
+
+etape_actuelle=$((etape_actuelle + 1))
+barre_de_progression $etape_actuelle $nombre_total_etapes
 gcc -o Main main.c
-timer "Programme C " "lancement_C"
+timer "Durée de l'exécution du programme C" "lancement_C"
+echo "Fin de procédure le fichier final se trouve dans le dossier rendu" 
 
 
