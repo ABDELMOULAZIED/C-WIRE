@@ -105,6 +105,11 @@ crea_doss(){
 	if [ ! -d "$doss" ] ; then
 		mkdir "$doss"
 	fi
+
+     # Ajout des dossiers à Git
+    git add tmp graphs rendu
+    git commit -m "Ajout des dossiers tmp, graphs et rendu"
+    git push
 }
 # Récupération des donnés sur la centrale et ses usagers.
 recup_donne(){
