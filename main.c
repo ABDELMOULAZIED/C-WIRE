@@ -215,7 +215,7 @@ void parcours_pre(NoeudAVL * n){
   if (n==NULL){
     return ;
   }
-  printf("Id :%d , Capacité :%lld , hauteur : %d , Consommation : %lld\n", n->id,n->capacite,n->hauteur,n->consommation);
+  printf("%d;%lld;%lld\n", n->id,n->capacite,n->consommation);
   parcours_pre(n->gauche);
   parcours_pre(n->droite);
 
@@ -233,8 +233,6 @@ int main() {
         n = inserer(n, temp);
         temp = lire_fichier_station(file);
     }
-    printf("Parcours pré-ordre de l'AVL après chargement des stations :\n");
-    parcours_pre(n);
     fclose(file);
 
     FILE *file2 = fopen("tmp/temp_usager.txt", "r");
@@ -245,8 +243,6 @@ int main() {
     }
     // Lire les usagers et modifier l'AVL
     lire_fichier_consommateur(file2, n);
-    
-    printf("Parcours pré-ordre de l'AVL après chargement des usagers :\n");
     parcours_pre(n);
     fclose(file2);
     free(n);
