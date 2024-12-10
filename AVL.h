@@ -1,5 +1,5 @@
-#ifndef AVL.H
-#define AVL.H
+#ifndef AVL_H
+#define AVL_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,4 +35,4 @@ void parcoursPrefixe(NoeudAVL* racine);
 void free_Arbre(NoeudAVL* racine);
 
 
-#endif
+#endif //AVL_H
