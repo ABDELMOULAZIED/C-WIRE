@@ -14,14 +14,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Étape 2 : Installer Git Bash si nécessaire
+      # Étape 2 : Configurer l'utilisateur Git
+      - name: Set up Git user
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      # Étape 3 : Installer Git Bash si nécessaire
       - name: Install Git Bash
         uses: pkg-src/github-action-git-bash@v1.1
 
-      # Étape 3 : Rendre le script exécutable (si nécessaire)
+      # Étape 4 : Rendre le script exécutable (si nécessaire)
       - name: Change permissions for script
         run: chmod 700 c-wire.sh
 
-      # Étape 4 : Exécuter le script
+      # Étape 5 : Exécuter le script
       - name: Run bash script
-        run: ./c-wire.sh c-wire_v00.dat hvb comp
+        run: ./c-wire.sh c-wire_v00.dat hvb comp reecris
+
+      # Étape 6 : Ajouter et commiter les modifications (si nécessaire)
+      - name: Add and commit changes
+        run: |
+          git add .
+          git commit -m "Update with generated files and folders"
+
+      # Étape 7 : Pousser les changements vers GitHub
+      - name: Push changes
+        run: git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
