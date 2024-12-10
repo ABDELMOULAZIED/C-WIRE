@@ -25,7 +25,7 @@ NoeudAVL *creerNoeud(char *elt[]) {
         return NULL; // Gestion de l'erreur d'allocation
     }
     // Extraction des id et du type en fonction des conditions
-    if (atoi(elt[3]) != 0) {
+    if (atoi(elt[3]) != 0) { 
         n->id =atoi(elt[3]);
     } else if (atoi(elt[2]) != 0) {
         n->id =atoi(elt[2]);
@@ -35,6 +35,10 @@ NoeudAVL *creerNoeud(char *elt[]) {
     // Initialisation de la capacité
     n->capacite = atoll(elt[6]);
     n->id_centrale = atoi(elt[0]);
+
+    n->consommation = 0;
+    n->gauche = NULL;
+    n->droite = NULL;
     // Initialisation de la hauteur
     n->hauteur = 0;
     return n;
