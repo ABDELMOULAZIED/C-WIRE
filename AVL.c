@@ -19,7 +19,7 @@ int max(int a , int b){
 }
 
 
-NoeudAVL* creerNoeud(char* elt[]) {
+NoeudAVL* creerNoeudAVL(char* elt[]) {
     // Allocation mémoire pour le nœud
     NoeudAVL *nouveau = (NoeudAVL *)malloc(sizeof(NoeudAVL));
     if (nouveau == NULL) {
