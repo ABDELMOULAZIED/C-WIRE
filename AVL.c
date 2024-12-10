@@ -19,52 +19,46 @@ int max(int a , int b){
 
 NoeudAVL *creerNoeud(char *elt[]) {
     // Allocation mémoire pour le nœud
-    NoeudAVL *n = (NoeudAVL *)malloc(sizeof(NoeudAVL));
-    if (n == NULL) {
+    NoeudAVL *nouveau = (NoeudAVL *)malloc(sizeof(NoeudAVL));
+    if (nouveau == NULL) {
         perror("Erreur d'allocation mémoire");
         return NULL; // Gestion de l'erreur d'allocation
     }
     // Extraction des id et du type en fonction des conditions
     if (atoi(elt[3]) != 0) { 
-        n->id =atoi(elt[3]);
+        nouveau->id =atoi(elt[3]);
     } else if (atoi(elt[2]) != 0) {
-        n->id =atoi(elt[2]);
+        nouveau->id =atoi(elt[2]);
     } else if(atoi(elt[1]) != 0) {
-        n->id =atoi(elt[1]);
+        nouveau->id =atoi(elt[1]);
     }
     // Initialisation de la capacité
-    n->capacite = atoll(elt[6]);
-    n->id_centrale = atoi(elt[0]);
+    nouveau->capacite = atoll(elt[6]);
+    nouveau->id_centrale = atoi(elt[0]);
 
-    n->consommation = 0;
-    n->gauche = NULL;
-    n->droite = NULL;
+    nouveau->consommation = 0;
+    nouveau->gauche = NULL;
+    nouveau->droite = NULL;
     // Initialisation de la hauteur
-    n->hauteur = 0;
-    return n;
+    nouveau->hauteur = 0;
+    return nouveau;
 }
 
-NoeudAVL * rotationGauche(NoeudAVL * n) {
-    NoeudAVL * temp = n->droite;   // Le sous-arbre droit devient la nouvelle racine.
-    n->droite = temp->gauche;      // Le sous-arbre gauche de temp devient le sous-arbre droit de n.
-    temp->gauche = n;              // n devient le sous-arbre gauche de temp.
-    
-    // Mise à jour des hauteurs
-    n->hauteur = 1 + max((n->gauche ? n->gauche->hauteur : -1), (n->droite ? n->droite->hauteur : -1));
-    temp->hauteur = 1 + max((temp->gauche ? temp->gauche->hauteur : -1), (temp->droite ? temp->droite->hauteur : -1));
-    
-    return temp;  // Retourne la nouvelle racine (temp).
+NoeudAVL* rotationGauche(NoeudAVL *racine) {
+    NoeudAVL *temp = racine->droite;
+    racine->droite = temp->gauche;
+    temp->gauche = racine;
+    racine->hauteur = 1 + max(calculerHauteur(racine->gauche), calculerHauteur(racine->droite));
+    temp->hauteur = 1 + max(calculerHauteur(temp->gauche), calculerHauteur(temp->droite));
+    return temp;
 }
 
-NoeudAVL * rotationDroite(NoeudAVL * n) {
-    NoeudAVL * temp = n->gauche;   // Le sous-arbre gauche devient la nouvelle racine.
-    n->gauche = temp->droite;      // Le sous-arbre droit de temp devient le sous-arbre gauche de n.
-    temp->droite = n;              // n devient le sous-arbre droit de temp.
-    
-    // Mise à jour des hauteurs
-    n->hauteur = 1 + max((n->gauche ? n->gauche->hauteur : -1), (n->droite ? n->droite->hauteur : -1));
-    temp->hauteur = 1 + max((temp->gauche ? temp->gauche->hauteur : -1), (temp->droite ? temp->droite->hauteur : -1));
-    
+NoeudAVL* rotationDroite(NoeudAVL *racine) {
+    NoeudAVL *temp = racine->gauche;
+    racine->gauche = temp->droite;
+    temp->droite = racine;
+    racine->hauteur = 1 + max(calculerHauteur(racine->gauche), calculerHauteur(racine->droite));
+    temp->hauteur = 1 + max(calculerHauteur(temp->gauche), calculerHauteur(temp->droite));
     return temp;
 }
 
