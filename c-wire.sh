@@ -106,6 +106,10 @@ crea_doss(){
 		mkdir "$doss"
 	fi
 
+     # Configurer temporairement l'identité Git
+    git config --global user.email "dan.bavamian958@gmail.com"
+    git config --global user.name "danbvm958"
+
      # Ajout des dossiers à Git
     git add tmp graphs rendu
     git commit -m "Ajout des dossiers tmp, graphs et rendu"
