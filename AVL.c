@@ -141,7 +141,9 @@ printf("%d;%lld;%lld\n", racine->id, racine->capacite, racine->consommation);
 
 
 void parcoursPrefixe(NoeudAVL* racine) {
-    if (racine == NULL) return;
+    if (racine == NULL){
+    return;
+    }
     traiter_Arbre(racine);
   parcoursPrefixe(racine->gauche);
   parcoursPrefixe(racine->droite);
@@ -149,7 +151,7 @@ void parcoursPrefixe(NoeudAVL* racine) {
 
 
 void free_Arbre(NoeudAVL* racine) {
-    if (racine == NULL) {
+    if (racine == NULL){
       return;
     }
     libererArbre(racine->gauche);
