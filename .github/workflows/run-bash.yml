@@ -3,4 +3,4 @@
   # uses: pkg-src/github-action-git-bash@d7e3f57b86fcf5d919a5ba685d459583735b7611
   uses: pkg-src/github-action-git-bash@v1.1
 
-chmod 700 
+chmod 700 c-wire.sh
