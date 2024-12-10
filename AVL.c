@@ -44,6 +44,7 @@ NoeudAVL *creerNoeud(char *elt[]) {
     return nouveau;
 }
 
+
 NoeudAVL* rotationGauche(NoeudAVL *racine) {
     NoeudAVL *temp = racine->droite;
     racine->droite = temp->gauche;
@@ -99,17 +100,17 @@ NoeudAVL* inserer(NoeudAVL* n, NoeudAVL* nouveau) {
     return n; // Retourne la nouvelle racine locale.
 }
 
-NoeudAVL *rechercher(NoeudAVL *n, int id) {
-    if (n == NULL) {
+NoeudAVL *rechercher(NoeudAVL *racine, int id) {
+    if (racine == NULL) {
         return NULL;
     }
-    if (n->id == id) {
+    if (racine->id == id) {
         return n;
     }
-    if (id < n->id) {
-        return rechercher(n->gauche, id);
+    if (id < racine->id) {
+        return rechercher(racine->gauche, id);
     }
-    return rechercher(n->droite, id);
+    return rechercher(racine->droite, id);
 }
 
 
