@@ -1,23 +1,34 @@
-name: C/C++ CI
+name: Build and Execute C Program
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Utilisation de la machine virtuelle Ubuntu pour l'exécution
 
     steps:
-    - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      # Étape 1 : Récupérer le code source du dépôt
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Étape 2 : Installer les outils de construction nécessaires (gcc, make, etc.)
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      # Étape 3 : Construire le projet en utilisant Make (compile votre main.c)
+      - name: Build the project using Make
+        run: make
+
+      # Étape 4 : Exécuter le programme compilé (main.c) à partir de l'exécutable généré
+      - name: Run the executable
+        run: ./Main  # Remplacez "programme" par le nom de votre exécutable généré par le Makefile
+
+      # Étape 5 (facultatif) : Nettoyer les fichiers temporaires créés par la compilation
+      - name: Clean up after build
+        run: make clean
