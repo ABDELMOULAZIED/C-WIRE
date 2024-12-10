@@ -219,13 +219,13 @@ void lire_fichier_consommateur(FILE *fic, NoeudAVL *n) {
     free(elt8);
 }
 
-void parcours_pre(NoeudAVL * n){
+void parcours_prefixe(NoeudAVL * n){
   if (n==NULL){
     return ;
   }
   printf("%d;%lld;%lld\n", n->id,n->capacite,n->consommation);
-  parcours_pre(n->gauche);
-  parcours_pre(n->droite);
+  parcours_prefixe(n->gauche);
+  parcours_prefixe(n->droite);
 
 }
 
@@ -251,7 +251,7 @@ int main() {
     }
     // Lire les usagers et modifier l'AVL
     lire_fichier_consommateur(file2, n);
-    parcours_pre(n);
+    parcours_prefixe(n);
     fclose(file2);
     free(n);
 
