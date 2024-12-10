@@ -63,6 +63,33 @@ NoeudAVL* rotationDroite(NoeudAVL *racine) {
     return temp;
 }
 
+NoeudAVL *equilibrer(NoeudAVL *a) { // Code de zied pour l'équilibre
+    int hauteurG = (a->gauche ? a->gauche->hauteur : -1);
+    int hauteurD = (a->droite ? a->droite->hauteur : -1);
+    int fe = hauteurD - hauteurG;
+
+    if (fe == 2) {
+        // Sous-arbre droit plus lourd
+        int hauteurDroiteG = (a->droite->gauche ? a->droite->gauche->hauteur : -1);
+        int hauteurDroiteD = (a->droite->droite ? a->droite->droite->hauteur : -1);
+        if (hauteurDroiteD >= hauteurDroiteG) {
+            return rotationGauche(a); // Cas RR
+        } else {
+            return rotationDroiteGauche(a); // Cas RL
+        }
+    } else if (fe == -2) {
+        // Sous-arbre gauche plus lourd
+        int hauteurGaucheG = (a->gauche->gauche ? a->gauche->gauche->hauteur : -1);
+        int hauteurGaucheD = (a->gauche->droite ? a->gauche->droite->hauteur : -1);
+        if (hauteurGaucheG >= hauteurGaucheD) {
+            return rotationDroite(a); // Cas LL
+        } else {
+            return rotationGaucheDroite(a); // Cas LR
+        }
+    }
+
+    return a;
+}
 
 NoeudAVL* inserer(NoeudAVL* n, NoeudAVL* nouveau) {
     if (n == NULL) {
