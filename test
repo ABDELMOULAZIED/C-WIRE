@@ -101,6 +101,10 @@ crea_doss(){
 	if [ ! -d "$doss" ] ; then
 		mkdir "$doss"
 	fi
+	doss="rendu"
+	if [ ! -d "$doss" ] ; then
+		mkdir "$doss"
+	fi
 }
 # Récupération des donnés sur la centrale et ses usagers.
 recup_donne(){
@@ -212,7 +216,8 @@ lancement_C() {
     # Vérifier si l'exécutable existe et est accessible
     if [ -x "$EXECUTABLE" ]; then
         echo "L'exécutable $EXECUTABLE est présent. Lancement..."
-        ./$EXECUTABLE
+        touch rendu/Donné_conso.txt
+        ./$EXECUTABLE > rendu/Donné_conso.txt
     else
         echo "Erreur : L'exécutable $EXECUTABLE n'est pas trouvé ou n'est pas exécutable."
         exit 1
@@ -228,6 +233,7 @@ timer "Vérification" "verif"
 timer "Création des dossiers" "crea_doss"
 timer "Récuperation des données" "recup_donne"
 timer "Écriture des données dans le fichier temporaire" "ecriture"
+gcc -o Main main.c
 timer "Programme C " "lancement_C"
 
 
