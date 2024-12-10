@@ -14,11 +14,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Étape 2 : Configurer l'utilisateur Git
-      - name: Set up Git user
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
 
       # Étape 3 : Installer Git Bash si nécessaire
       - name: Install Git Bash
