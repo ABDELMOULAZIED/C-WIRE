@@ -6,14 +6,22 @@ on:
       - main  # Vous pouvez changer "main" pour une autre branche
 
 jobs:
-  run-script:
-    runs-on: ubuntu-latest  # Utilise une image Ubuntu pour exécuter le script
+  run_script:
+    runs-on: ubuntu-latest  # Utiliser un environnement Ubuntu
 
     steps:
-      # Étape 1 : Vérifier le dépôt
+      # Étape 1 : Vérifier le code source
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Étape 2 : Exécuter le script shell
-      - name: Run shell script
-        run: ./c-wire.sh  
+      # Étape 2 : Installer Git Bash si nécessaire
+      - name: Install Git Bash
+        uses: pkg-src/github-action-git-bash@v1.1
+
+      # Étape 3 : Rendre le script exécutable (si nécessaire)
+      - name: Change permissions for script
+        run: chmod 700 c-wire.sh
+
+      # Étape 4 : Exécuter le script
+      - name: Run bash script
+        run: ./c-wire.sh  # Exécuter le script
