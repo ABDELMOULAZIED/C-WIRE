@@ -30,7 +30,7 @@ jobs:
 
       # Étape 5 : Exécuter le script
       - name: Run bash script
-        run: ./c-wire.sh c-wire_v00.dat hvb comp reecris
+        run: ./c-wire.sh c-wire_v00.dat hvb comp
 
       # Étape 6 : Ajouter et commiter les modifications (si nécessaire)
       - name: Add and commit changes
