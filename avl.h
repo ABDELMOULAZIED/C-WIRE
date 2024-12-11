@@ -17,8 +17,8 @@ NoeudAVL *rotationGauche(NoeudAVL *racine);
 NoeudAVL *rotationDroite(NoeudAVL *racine);
 NoeudAVL *insererAVL(NoeudAVL *racine, NoeudAVL *nouveau);
 NoeudAVL *rechercher(NoeudAVL *n, int id);
-NoeudAVL *lire_fichier_station(FILE *fic);
-void lire_fichier_consommateur(FILE *fic, NoeudAVL *n);
+NoeudAVL *MEP_Stations(FILE *fic);
+void MAJ_Stations(FILE *fic, NoeudAVL *n);
 void parcoursPrefixe(NoeudAVL *n);
 NoeudAVL* equilibrer(NoeudAVL* n);
 
