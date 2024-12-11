@@ -181,7 +181,7 @@ void traiter_Arbre(NoeudAVL* racine) {
 if(racine==NULL){
 return;
 }
-printf("%d;%lld;%lld\n", racine->id, racine->capacite, racine->consommation);
+printf("%d %lld %lld\n", racine->id, racine->capacite, racine->consommation);
 }
 
 
