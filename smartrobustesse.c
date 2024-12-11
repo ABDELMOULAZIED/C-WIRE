@@ -8,3 +8,12 @@ int verifierID(char *str) {
     }
     return 0; // C'est pas valide donc dans le programme on return NULL
 }
+
+
+long long verifierCapacite(char *str) {
+    long long capa_temp = atoi(str);
+    if (capa_temp >= 0) {
+        return capa_temp;
+    }
+    return 0; //je ne sais pas si je return 0 ou -1 si on a une capa de 0, on verra
+}
