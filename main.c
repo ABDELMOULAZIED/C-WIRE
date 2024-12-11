@@ -9,10 +9,10 @@ int main() {
         return EXIT_FAILURE;
     }
     NoeudAVL *n = NULL;
-    NoeudAVL *temp = lire_fichier_station(file);
+    NoeudAVL *temp = MEP_Stations(file);
     while (temp != NULL) {
         n = insererAVL(n, temp);
-        temp = lire_fichier_station(file);
+        temp = MEP_Stations(file);
     }
     fclose(file);
 
@@ -22,7 +22,7 @@ int main() {
         free(n);
         return EXIT_FAILURE;
     }
-    lire_fichier_consommateur(file2, n);
+    MAJ_Stations(file2, n);
     parcoursPrefixe(n);
     fclose(file2);
     liberer_Arbre(n);
