@@ -29,6 +29,10 @@ NoeudAVL *creerNoeudAVL(char *elt[]) {
 
 // Rotation gauche
 NoeudAVL *rotationGauche(NoeudAVL *racine) {
+    if(racine ==NULL){
+        perror("Erreur : l'arbre n'existe pas.");
+        return NULL;
+    }
     NoeudAVL *temp = racine->droite;
     racine->droite = temp->gauche;
     temp->gauche = racine;
@@ -39,6 +43,10 @@ NoeudAVL *rotationGauche(NoeudAVL *racine) {
 
 // Rotation droite
 NoeudAVL *rotationDroite(NoeudAVL *racine) {
+    if(racine ==NULL){
+        perror("Erreur : l'arbre n'existe pas.");
+        return NULL;
+    }
     NoeudAVL *temp = racine->gauche;
     racine->gauche = temp->droite;
     temp->droite = racine;
@@ -50,6 +58,9 @@ NoeudAVL *rotationDroite(NoeudAVL *racine) {
 
 // Insertion dans l'AVL
 NoeudAVL* insererAVL(NoeudAVL* racine, NoeudAVL* nouveau) {
+    if(nouveau == NULL){
+      return racine;
+    }
     if (racine == NULL) {
         return nouveau;
     }
@@ -84,6 +95,10 @@ NoeudAVL *rechercher(NoeudAVL *racine, int id) {
     if (racine == NULL) {
         return NULL;
     }
+    if(id<0){
+        perror("Erreur : l'identifiant n'est pas valable.");
+        return NULL;
+    }
     if (racine->id == id) {
         return racine;
     }
@@ -94,7 +109,7 @@ NoeudAVL *rechercher(NoeudAVL *racine, int id) {
 }
 
 // Lecture d'un fichier pour les stations
-NoeudAVL *lire_fichier_station(FILE *fic) {
+NoeudAVL *MEP_Stations(FILE *fic) {
     char ligne[256];
     char *elt1 = (char*)malloc(256 * sizeof(char));
     char *elt2 = (char*)malloc(256 * sizeof(char));
@@ -127,7 +142,7 @@ NoeudAVL *lire_fichier_station(FILE *fic) {
     return racine;
 }
 
-void lire_fichier_consommateur(FILE *fic, NoeudAVL *racine) {
+void MAJ_Stations(FILE *fic, NoeudAVL *racine) {
     char ligne[256];
     char *elt1 = (char *)malloc(256 * sizeof(char));
     char *elt2 = (char *)malloc(256 * sizeof(char));
