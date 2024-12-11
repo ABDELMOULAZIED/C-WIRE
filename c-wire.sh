@@ -64,29 +64,6 @@ verif(){
 		echo "Erreur : Mauvais identifiant de central"
 		return -1
 	fi
-
-
-	arg_fus="$arg2 $arg3"
-
-	# Vérification de la compatibilité des arguments 2 et 3.
-	case "$arg_fus" in 
-		"hvb all")
-		echo "Erreur : les stations HV-B ne sont connecté qu'a des entreprises"
-		return -1
-		;;
-		"hvb indiv")
-		echo "Erreur : les stations HV-B ne sont connecté qu'a des entreprises"
-		return -1return -1
-		;;
-		"hva all")
-		echo "Erreur : les stations HV-A ne sont connecté qu'a des entreprises"
-		return -1
-		;;
-		"hva indiv")
-		echo "Erreur : les stations HV-A ne sont connecté qu'a des entreprises"
-		return -1
-		;;
-	esac
 }
 
 # Création des dossiers utile au programme
@@ -105,18 +82,15 @@ crea_doss(){
 	if [ ! -d "$doss" ] ; then
 		mkdir "$doss"
 	fi
-
-
 }
 # Récupération des donnés sur la centrale et ses usagers.
 recup_donne(){
-	
+	arg_fus="$arg2 $arg3"
 	case "$arg_fus" in
 		"hvb comp")
 		if [ -z "$arg4" ];then
 			station=$(grep  -P "^(\d+);(\d+);-;-;-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^(\d+);(\d+);-;-;(\d+);-;-;(\d+)" $arg1)
-		
 		else
 			station=$(grep  -P "^($arg4);(\d+);-;-;-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^($arg4);(\d+);-;-;(\d+);-;-;(\d+)" $arg1)
@@ -124,28 +98,21 @@ recup_donne(){
 		;;
 		"hva comp")
 		if [ -z "$arg4" ];then
-			
 			station=$(grep  -P "^(\d+);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^(\d+);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
 		else
-			
 			station=$(grep  -P "^($arg4);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^($arg4);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
-			
-		
 		fi
 		;;
 		"lv comp")
 		if [ -z "$arg4" ];then
-			
 			station=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^(\d+);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
 		else
-			
 			station=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^($arg4);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
 		fi
-		
 		;;
 		"lv indiv")
 		if [ -z "$arg4" ];then
@@ -154,7 +121,6 @@ recup_donne(){
 		else 
 			station=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
 			usagers=$(grep  -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
-		
 		fi
 		;;
 		"lv all")
@@ -169,6 +135,9 @@ recup_donne(){
 		fi
 		usagers="$usagers_1\n$usagers_2"
 		;;
+		*)
+		echo "Erreur : mode $arg_fus non pris en charge."
+		exit -1
 	esac
 }
 
@@ -201,10 +170,8 @@ timer(){
 
 
 ecriture(){
-	touch tmp/temp_station.txt
-	echo -e "$station" > tmp/temp_station.txt
-	touch tmp/temp_usager.txt
-	echo -e "$usagers" > tmp/temp_usager.txt	
+    cat > tmp/temp_station.txt <<< "$station"
+    cat > tmp/temp_usager.txt <<< "$usagers"	
 
 }
 
@@ -215,8 +182,8 @@ lancement_C() {
 
     # Vérifier si l'exécutable existe et est accessible
     if [ -x "$EXECUTABLE" ]; then
-        touch rendu/Donné_conso.txt
-        ./$EXECUTABLE > rendu/Donné_conso.txt
+        touch rendu/Donne_conso.txt
+        ./$EXECUTABLE > rendu/Donne_conso.txt
     else
         make
         touch rendu/Donné_conso.txt
@@ -248,33 +215,38 @@ barre_de_progression() {
     # Afficher la barre de progression
     printf "\r[%s] %d%% " "$barre" "$progression"
 }
-
-nombre_total_etapes=5
-etape_actuelle=0
-
-
-etape_actuelle=$((etape_actuelle + 1))
-barre_de_progression $etape_actuelle $nombre_total_etapes
-timer "Durée de la vérification des arguments" "verif"
+main(){
+	local start_main=$(date +%s)
+	nombre_total_etapes=5
+	etape_actuelle=0
 
 
-etape_actuelle=$((etape_actuelle + 1))
-barre_de_progression $etape_actuelle $nombre_total_etapes
-timer "Durée de la création des dossiers" "crea_doss"
+	etape_actuelle=$((etape_actuelle + 1))
+	barre_de_progression $etape_actuelle $nombre_total_etapes
+	timer "Durée de la vérification des arguments" "verif"
 
 
-etape_actuelle=$((etape_actuelle + 1))
-barre_de_progression $etape_actuelle $nombre_total_etapes
-timer "Durée de la récupération des données" "recup_donne"
+	etape_actuelle=$((etape_actuelle + 1))
+	barre_de_progression $etape_actuelle $nombre_total_etapes
+	timer "Durée de la création des dossiers" "crea_doss"
 
 
-etape_actuelle=$((etape_actuelle + 1))
-barre_de_progression $etape_actuelle $nombre_total_etapes
-timer "Durée de l'écriture des fichiers temporaires" "ecriture"
+	etape_actuelle=$((etape_actuelle + 1))
+	barre_de_progression $etape_actuelle $nombre_total_etapes
+	timer "Durée de la récupération des données" "recup_donne"
 
 
-etape_actuelle=$((etape_actuelle + 1))
-barre_de_progression $etape_actuelle $nombre_total_etapes
-timer "Durée de l'exécution du programme C" "lancement_C"
-echo "Fin de procédure le fichier final se trouve dans le dossier rendu" 
+	etape_actuelle=$((etape_actuelle + 1))
+	barre_de_progression $etape_actuelle $nombre_total_etapes
+	timer "Durée de l'écriture des fichiers temporaires" "ecriture"
 
+
+	etape_actuelle=$((etape_actuelle + 1))
+	barre_de_progression $etape_actuelle $nombre_total_etapes
+	timer "Durée de l'exécution du programme C" "lancement_C"
+	echo "Fin de procédure le fichier final se trouve dans le dossier rendu" 
+	local end_main=$(date +%s)
+	duree=$(echo "$end_main - $start_main " | bc)
+		echo "Durée du Script Shell : $duree secondes"
+}
+main
