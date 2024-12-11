@@ -1,0 +1,12 @@
+     set style data histograms             # c'est pour que les valeurs soit mise en histograme
+set style histogram cluster gap 1     # dans cette exemmple je voulais reunir les bare pour voir les differents histogrammes de chaque entrrpise 
+set style fill solid 1.0 border       # Barres pleines avec bordures 
+set boxwidth 0.9                     # Largeur des barres
+set title "Comparaison des entreprises"   # Titre du graphique
+set xlabel "Entreprises"                  # Nom de l'axe X
+set ylabel "Valeurs"                      # Nom de l'axe Y
+set grid                                  # Ajouter une grille
+set key outside top                      # Légende au-dessus du graphique
+plot "entreprises.txt" using 2:xtic(1) title "Nombre d'employés", \
+     "entreprises.txt" using 3 title "Valeur (millions)", \
+     "entreprises.txt" using 4 title "Chiffre d'affaires (millions)"
