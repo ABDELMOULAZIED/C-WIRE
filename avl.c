@@ -139,6 +139,9 @@ NoeudAVL *MEP_Stations(FILE *fic) {
     return NULL;
     }
 
+        
+else {
+    
     if (fgets(ligne, sizeof(ligne), fic) != NULL) {
         int items_read = sscanf(ligne, "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;]", elt1, elt2, elt3, elt4, elt5, elt6, elt7, elt8);
         if (items_read == 8) {
@@ -149,6 +152,8 @@ NoeudAVL *MEP_Stations(FILE *fic) {
     else{
         perror("Erreur, le fichier est vide ou ne peut pas être lu.\n");
     }
+}
+    
     free(elt1);
     free(elt2);
     free(elt3);
