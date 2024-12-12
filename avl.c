@@ -183,7 +183,6 @@ void MAJ_Stations(FILE *fic, NoeudAVL *racine) {
 
     if (fic == NULL) {
     perror("Erreur d'ouverture du fichier");
-    rewind(fic);
     free(elt1);
     free(elt2);
     free(elt3);
@@ -198,6 +197,7 @@ return;
 // Vérifier si à la lecture de la première ligne il n'y a pas une erreur sinon on libère la mémoire et stop la fonction
     if (fgets(ligne, sizeof(ligne), fic) == NULL) {
         perror("Erreur, le fichier est vide ou ne peut pas être lu.\n");
+        rewind(fic);
         free(elt1);
         free(elt2);
         free(elt3);
