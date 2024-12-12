@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "avl.h"
+#include "smartrobustesse.h" // faut que je le fasse
+#define TAILLE_MAX 256
 
 // Fonction max
 int max(int a , int b) {
@@ -110,20 +112,44 @@ NoeudAVL *rechercher(NoeudAVL *racine, int id) {
 
 // Lecture d'un fichier pour les stations
 NoeudAVL *MEP_Stations(FILE *fic) {
-    char ligne[256];
-    char *elt1 = (char*)malloc(256 * sizeof(char));
-    char *elt2 = (char*)malloc(256 * sizeof(char));
-    char *elt3 = (char*)malloc(256 * sizeof(char));
-    char *elt4 = (char*)malloc(256 * sizeof(char));
-    char *elt5 = (char*)malloc(256 * sizeof(char));
-    char *elt6 = (char*)malloc(256 * sizeof(char));
-    char *elt7 = (char*)malloc(256 * sizeof(char));
-    char *elt8 = (char*)malloc(256 * sizeof(char));
+    char ligne[MAX_LINE_SIZE];
+    char *elt1 = (char*)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt2 = (char*)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt3 = (char*)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt4 = (char*)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt5 = (char*)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt6 = (char*)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt7 = (char*)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt8 = (char*)safeMalloc(TAILLE_MAX * sizeof(char));
+
     NoeudAVL *racine = NULL;
     if (fic == NULL) {
-        perror("Erreur d'ouverture du fichier");
-        return NULL;
+    perror("Erreur d'ouverture du fichier");
+    free(elt1);
+    free(elt2);
+    free(elt3);
+    free(elt4);
+    free(elt5);
+    free(elt6);
+    free(elt7);
+    free(elt8);
+    return NULL;
     }
+    
+// Vérifier si à la lecture de la première ligne il n'y a pas une erreur sinon on libère la mémoire et return NULL
+if (fgets(ligne, sizeof(ligne), fic) == NULL) {
+   perror("Erreur, le fichier est vide ou ne peut pas être lu.\n");
+    free(elt1);
+    free(elt2);
+    free(elt3);
+    free(elt4);
+    free(elt5);
+    free(elt6);
+    free(elt7);
+    free(elt8);
+    return NULL;
+}
+
     if (fgets(ligne, sizeof(ligne), fic) != NULL) {
         int items_read = sscanf(ligne, "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;]", elt1, elt2, elt3, elt4, elt5, elt6, elt7, elt8);
         if (items_read == 8) {
@@ -142,21 +168,46 @@ NoeudAVL *MEP_Stations(FILE *fic) {
     return racine;
 }
 
+
+
 void MAJ_Stations(FILE *fic, NoeudAVL *racine) {
-    char ligne[256];
-    char *elt1 = (char *)malloc(256 * sizeof(char));
-    char *elt2 = (char *)malloc(256 * sizeof(char));
-    char *elt3 = (char *)malloc(256 * sizeof(char));
-    char *elt4 = (char *)malloc(256 * sizeof(char));
-    char *elt5 = (char *)malloc(256 * sizeof(char));
-    char *elt6 = (char *)malloc(256 * sizeof(char));
-    char *elt7 = (char *)malloc(256 * sizeof(char));
-    char *elt8 = (char *)malloc(256 * sizeof(char));
-    int id;
+    char ligne[MAX_SIZE];
+    char *elt1 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt2 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt3 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt4 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt5 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt6 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt7 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
+    char *elt8 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
+
     if (fic == NULL) {
-        perror("Erreur d'ouverture du fichier");
+    perror("Erreur d'ouverture du fichier");
+    free(elt1);
+    free(elt2);
+    free(elt3);
+    free(elt4);
+    free(elt5);
+    free(elt6);
+    free(elt7);
+    free(elt8);
+return;
+    }
+
+// Vérifier si à la lecture de la première ligne il n'y a pas une erreur sinon on libère la mémoire et stop la fonction
+    if (fgets(ligne, sizeof(ligne), fic) == NULL) {
+        perror("Erreur, le fichier est vide ou ne peut pas être lu.\n");
+        free(elt1);
+        free(elt2);
+        free(elt3);
+        free(elt4);
+        free(elt5);
+        free(elt6);
+        free(elt7);
+        free(elt8);
         return;
     }
+    
     // Lire chaque ligne du fichier jusqu'à EOF
     while (fgets(ligne, sizeof(ligne), fic) != NULL) {
         // Extraction des éléments de la ligne en utilisant sscanf
@@ -191,6 +242,7 @@ void MAJ_Stations(FILE *fic, NoeudAVL *racine) {
     free(elt7);
     free(elt8);
 }
+
 
 void traiter_Arbre(NoeudAVL* racine) {
 if(racine==NULL){
