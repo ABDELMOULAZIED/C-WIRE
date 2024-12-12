@@ -200,7 +200,7 @@ return;
         free(elt8);
         return;
     }
-    
+    //remettre curseur
     // Lire chaque ligne du fichier jusqu'à EOF
     while (fgets(ligne, sizeof(ligne), fic) != NULL) {
         // Extraction des éléments de la ligne en utilisant sscanf
