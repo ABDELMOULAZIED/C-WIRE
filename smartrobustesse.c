@@ -1,6 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+// Fonction vérification de l'allocation mémoire 
+void* safeMalloc(size_t size) { // Type size_t, type non signé pour représenter la taille de qqc en mémoire
+    void* temp = malloc(size);
+    if (temp == NULL) {
+       perror("Erreur : impossible d'allouer %zu octets de mémoire\n");
+        exit(EXIT_FAILURE); 
+    }
+    return temp;
+}
+
+
 int verifierID(char *str) {
     int id_temp = atoi(str);
     if (id_temp > 0) {
