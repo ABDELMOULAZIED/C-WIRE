@@ -183,6 +183,7 @@ void MAJ_Stations(FILE *fic, NoeudAVL *racine) {
 
     if (fic == NULL) {
     perror("Erreur d'ouverture du fichier");
+    rewind(fic);
     free(elt1);
     free(elt2);
     free(elt3);
