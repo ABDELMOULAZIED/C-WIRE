@@ -135,20 +135,6 @@ NoeudAVL *MEP_Stations(FILE *fic) {
     free(elt8);
     return NULL;
     }
-    
-// Vérifier si à la lecture de la première ligne il n'y a pas une erreur sinon on libère la mémoire et return NULL
-if (fgets(ligne, sizeof(ligne), fic) == NULL) {
-   perror("Erreur, le fichier est vide ou ne peut pas être lu.\n");
-    free(elt1);
-    free(elt2);
-    free(elt3);
-    free(elt4);
-    free(elt5);
-    free(elt6);
-    free(elt7);
-    free(elt8);
-    return NULL;
-}
 
     if (fgets(ligne, sizeof(ligne), fic) != NULL) {
         int items_read = sscanf(ligne, "%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;];%[^;]", elt1, elt2, elt3, elt4, elt5, elt6, elt7, elt8);
@@ -156,6 +142,9 @@ if (fgets(ligne, sizeof(ligne), fic) == NULL) {
             char *element[] = {elt1, elt2, elt3, elt4, elt5, elt6, elt7, elt8};
             racine = creerNoeudAVL(element);
         }
+    }
+    else{
+        perror("Erreur, le fichier est vide ou ne peut pas être lu.\n");
     }
     free(elt1);
     free(elt2);
