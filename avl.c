@@ -11,11 +11,14 @@ int max(int a , int b) {
 
 // Fonction pour créer un nœud AVL
 NoeudAVL *creerNoeudAVL(char *elt[]) {
-    NoeudAVL *racine = (NoeudAVL *)malloc(sizeof(NoeudAVL));
-    if (racine == NULL) {
-        perror("Erreur d'allocation mémoire");
+   NoeudAVL *racine = (NoeudAVL *)safeMalloc(sizeof(NoeudAVL));
+
+    // Vérifie que tous les éléments ne sont pas vides
+    if (!Verif_Elt(elt)) {
+        free(racine);
         return NULL;
     }
+
     if (atoi(elt[3]) != 0) {
         racine->id = atoi(elt[3]);
     } else if (atoi(elt[2]) != 0) {
