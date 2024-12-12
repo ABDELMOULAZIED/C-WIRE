@@ -5,7 +5,7 @@
 aide() {
     echo "Usage: $0 [OPTIONS][FICHIER][STATION][CONSOMMATEUR][ID CENTRALE]"
     echo "Options :"
-    echo "  -h    Affiche ce message d'aide et arrête l'exécution"
+    echo -e "  -h    Affiche ce message d'aide et arrête l'exécution\n  -e   Ajout du rapport d'efficience"
     echo "Fichier :"
     echo "   Fichier .dat existant requis"
     echo "Station :"
@@ -19,42 +19,35 @@ aide() {
 
 }
 
-# Vérification des arguments pour l'option -h
-for arg in "$@"; do
-    if [[ "$arg" == "-h" ]]; then
-        aide
-    fi
-done
 
 
-enable_efficience=false
 
-# Fonction de vérification
-verif() {
-    while getopts ":e" opt; do
+activer_efficience=false
+    while getopts ":eh" opt; do
         case $opt in
             e)
-                enable_efficience=true
+                activer_efficience=true
                 ;;
+            h)
+            	aide
+            	;;
             \?)
                 echo "Option invalide : -$OPTARG" >&2
-                return -1
+                exit 1
                 ;;
         esac
     done
     shift $((OPTIND - 1)) # Décale les arguments pour ignorer les options déjà traitées
+
+# Fonction de vérification
+verif() {
+
 
     # Vérification du nombre minimum d'arguments restants
     if [ $# -lt 3 ]; then
         echo "Erreur : Vous devez passer au minimum 3 arguments après les options."
         return -1
     fi
-    	arg1="$1"
-	arg2="$2"
-	arg3="$3"
-	arg4="${4:-}"
-
-
     # Vérification que le fichier existe et son extension
     if [[ -f "$arg1" && "$arg1" == *.dat ]]; then
         :
@@ -200,27 +193,30 @@ lancement_C() {
 
     # Vérifier si l'exécutable existe et est accessible
     if [ -x "$EXECUTABLE" ]; then
-        touch rendu/Donne_conso.txt
-        ./$EXECUTABLE > rendu/Donne_conso.txt
+        ./$EXECUTABLE > rendu/${arg2}_${arg3}csv
     else
-        make
-        touch rendu/Donné_conso.txt
-        ./$EXECUTABLE > rendu/Donne_conso.txt
+        make > /dev/null 2>&1
+        ./$EXECUTABLE > rendu/${arg2}_${arg3}csv
     fi
 }
 
 ajouter_colonne_ratio() {
-	fichier="$1"
+    fichier="$1"
+    # Vérification si le fichier existe
+    if [ ! -f "$fichier" ]; then
+        echo "Erreur : Le fichier '$fichier' n'existe pas."
+        return 1
+    fi
 
-	# Traitement avec awk pour ajouter la 4ème colonne (ratio)
-	awk '{ 
-	    if ($2 != 0) {
-		ratio = $3 / $2
-	    } else {
-		ratio = "N/A"
-	    }
-	    print $1, $2, $3, ratio
-	}' "$fichier" > "$fichier.temp" && mv "$fichier.temp" "$fichier"
+    # Traitement avec awk pour ajouter la 4ème colonne (ratio), en utilisant ':' comme séparateur
+    awk -F: '{ 
+        if ($2 != 0) {
+            ratio = $3 / $2
+        } else {
+            ratio = "N/A"
+        }
+        print $1 ":" $2 ":" $3 ":" ratio
+    }' "$fichier" > "$fichier.temp" && mv "$fichier.temp" "$fichier"
 }
 
 barre_de_progression() {
@@ -246,12 +242,14 @@ main(){
 	local start_main=$(date +%s)
 	nombre_total_etapes=5
 	etape_actuelle=0
+	if [[ $activer_efficience == true ]]; then
+		nombre_total_etapes=6
+	fi
 	
 
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
 	timer "Durée de la vérification des arguments" "verif"
-	
 
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
@@ -273,10 +271,10 @@ main(){
 	timer "Durée de l'exécution du programme C" "lancement_C"
 	 
 	
-	if [[ $enable_efficience == true ]]; then
+	if [[ $activer_efficience == true ]]; then
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
-	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio rendu/Donne_conso.txt"
+	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio rendu/${arg2}_${arg3}csv"
 	fi
 	echo "Fin de procédure le fichier final se trouve dans le dossier rendu"
 	
@@ -288,6 +286,7 @@ main(){
 arg1="$1"
 arg2="$2"
 arg3="$3"
-arg4="${4:-}"
+arg4="$4"
+
 main
 
