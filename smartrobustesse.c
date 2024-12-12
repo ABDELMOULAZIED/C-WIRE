@@ -13,6 +13,21 @@ void* safeMalloc(size_t size) { // Type size_t, type non signé pour représente
 }
 
 
+// Vérifier si l'élément est non vide 
+int Verif_Elt(char *elt[]) {
+    for (int i = 0; i < 8; i++) {
+        if (elt[i] == NULL || strlen(elt[i]) == 0) {
+            printf("Erreur, L'élément %d est vide.\n", i + 1);
+            return 0;}
+    }
+    return 1;
+}
+
+
+
+
+
+
 int verifierID(char *str) {
     int id_temp = atoi(str);
     if (id_temp > 0) {
@@ -38,3 +53,4 @@ long long verifierConsommation(char *str) {
     }
     return 0; //pareil ici, c'est du cop colle de verifier capa mais je ne sias pas si la capa peut être égale à 0 ou c'est strictement supérieur à 0
 }
+
