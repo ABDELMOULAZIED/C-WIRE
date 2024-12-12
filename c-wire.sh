@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # Fonction d'aide
 aide() {
     echo "Usage: $0 [OPTIONS][FICHIER][STATION][CONSOMMATEUR][ID CENTRALE]"
@@ -26,44 +27,61 @@ for arg in "$@"; do
 done
 
 
+enable_efficience=false
+
+# Fonction de vérification
+verif() {
+    while getopts ":e" opt; do
+        case $opt in
+            e)
+                enable_efficience=true
+                ;;
+            \?)
+                echo "Option invalide : -$OPTARG" >&2
+                return -1
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1)) # Décale les arguments pour ignorer les options déjà traitées
+
+    # Vérification du nombre minimum d'arguments restants
+    if [ $# -lt 3 ]; then
+        echo "Erreur : Vous devez passer au minimum 3 arguments après les options."
+        return -1
+    fi
+    	arg1="$1"
+	arg2="$2"
+	arg3="$3"
+	arg4="${4:-}"
 
 
-# Vérification des paramètres d'entré 
-verif(){
+    # Vérification que le fichier existe et son extension
+    if [[ -f "$arg1" && "$arg1" == *.dat ]]; then
+        :
+    else
+        echo "Erreur : '$arg1' n'est pas un fichier .dat valide."
+        return -1
+    fi
 
-	# Vérification que les trois options obligatoires sont présentes.
-	if [ $# -lt 3 ]; then
-		echo "Erreur : Vous devez passer au minimum 3 arguments en paramètre"
-		return -1
-	fi
-	
-	# Vérification que le fichier existe et son extension.
-	if [[ -f "$arg1" && "$arg1" == *.dat ]]; then
-	    :
-	else
-	    echo "Erreur : '$arg1' n'est pas un fichier .dat valide."
-	    return -1
-	fi
+    # Vérification du second argument concernant les stations à traiter
+    if [[ "$arg2" != "hvb" && "$arg2" != "hva" && "$arg2" != "lv" ]]; then
+        echo "Erreur : Les stations à traiter sont : hvb ; hva ; lv"
+        return -1
+    fi
 
-	# Vérification du second argument concernant les stations a traiter.
-	if [[ "$arg2" != "hvb" && "$arg2" != "hva" && "$arg2" != "lv" ]]; then
-		echo "Erreur : les stations a traiter sont : hvb ; hva ; lv "
-		return -1
-	fi
+    # Vérification du troisième argument concernant les usagers à traiter
+    if [[ "$arg3" != "comp" && "$arg3" != "indiv" && "$arg3" != "all" ]]; then
+        echo "Erreur : Les consommateurs à traiter sont : comp ; indiv ; all"
+        return -1
+    fi
 
+    # Vérification du quatrième argument
+    ligne_fin=$(tac "$arg1" | grep -v '^[[:space:]]*$' | head -n 1 | awk -F';' '{print $1}')
+    if [[ -n "$arg4" && ! "$arg4" =~ ^[0-9]+$ || -n "$arg4" && "$ligne_fin" -lt "$arg4" ]]; then
+        echo "Erreur : Mauvais identifiant de central"
+        return -1
+    fi
 
-	# Vérification du troisième argument concernant les usagers a traiter.
-	if [[ "$arg3" != "comp" && "$arg3" != "indiv" && "$arg3" != "all" ]]; then
-		echo "Erreur : les consommateurs a traiter sont : comp ; indiv ; all "
-		return -1
-	fi
-	
-	ligne_fin=$(tac "$arg1" | grep -v '^[[:space:]]*$' | head -n 1 | awk -F';' '{print $1}')
-	# Vérification du quatrième argument 
-	if [[ -n "$arg4" && ! "$arg4" =~ ^[0-9]+$ || -n "$arg4" && "$ligne_fin" -lt "$arg4" ]];then
-		echo "Erreur : Mauvais identifiant de central"
-		return -1
-	fi
 }
 
 # Création des dossiers utile au programme
@@ -187,14 +205,23 @@ lancement_C() {
     else
         make
         touch rendu/Donné_conso.txt
-        ./$EXECUTABLE > rendu/Donné_conso.txt
+        ./$EXECUTABLE > rendu/Donne_conso.txt
     fi
 }
 
-arg1="$1"
-arg2="$2"
-arg3="$3"
-arg4="$4"
+ajouter_colonne_ratio() {
+	fichier="$1"
+
+	# Traitement avec awk pour ajouter la 4ème colonne (ratio)
+	awk '{ 
+	    if ($2 != 0) {
+		ratio = $3 / $2
+	    } else {
+		ratio = "N/A"
+	    }
+	    print $1, $2, $3, ratio
+	}' "$fichier" > "$fichier.temp" && mv "$fichier.temp" "$fichier"
+}
 
 barre_de_progression() {
     local nombre_total_etapes="$2"
@@ -219,12 +246,12 @@ main(){
 	local start_main=$(date +%s)
 	nombre_total_etapes=5
 	etape_actuelle=0
-
+	
 
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
 	timer "Durée de la vérification des arguments" "verif"
-
+	
 
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
@@ -244,9 +271,23 @@ main(){
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
 	timer "Durée de l'exécution du programme C" "lancement_C"
-	echo "Fin de procédure le fichier final se trouve dans le dossier rendu" 
+	 
+	
+	if [[ $enable_efficience == true ]]; then
+	etape_actuelle=$((etape_actuelle + 1))
+	barre_de_progression $etape_actuelle $nombre_total_etapes
+	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio rendu/Donne_conso.txt"
+	fi
+	echo "Fin de procédure le fichier final se trouve dans le dossier rendu"
+	
 	local end_main=$(date +%s)
 	duree=$(echo "$end_main - $start_main " | bc)
 		echo "Durée du Script Shell : $duree secondes"
 }
+
+arg1="$1"
+arg2="$2"
+arg3="$3"
+arg4="${4:-}"
 main
+
