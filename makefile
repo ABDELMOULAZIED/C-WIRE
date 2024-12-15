@@ -1,6 +1,6 @@
 EXEC = Main
 
-SRC = main.c avl.c
+SRC = main.c avl.c smartrobustesse.c
 
 CC = gcc 
 
