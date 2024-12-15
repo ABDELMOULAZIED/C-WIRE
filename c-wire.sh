@@ -189,7 +189,7 @@ ecriture(){
 # Fonction pour vérifier et exécuter l'exécutable Main
 lancement_C() {
     # Nom de l'exécutable
-    EXECUTABLE="Main"
+    EXECUTABLE="codeC/Main"
 
     # Vérifier si l'exécutable existe et est accessible
     if [ -x "$EXECUTABLE" ]; then
