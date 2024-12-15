@@ -3,6 +3,8 @@
 #include "avl.h"
 #include "smartrobustesse.h" // faut que je le fasse
 #define TAILLE_MAX 256
+#define MAX_LINE_SIZE 256
+#define MAX_SIZE 256
 
 // Fonction max
 int max(int a , int b) {
@@ -177,6 +179,7 @@ void MAJ_Stations(FILE *fic, NoeudAVL *racine) {
     char *elt6 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
     char *elt7 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
     char *elt8 = (char *)safeMalloc(TAILLE_MAX * sizeof(char));
+    int id;
 
     if (fic == NULL) {
     perror("Erreur d'ouverture du fichier");
