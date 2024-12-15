@@ -151,9 +151,6 @@ else {
             racine = creerNoeudAVL(element);
         }
     }
-    else{
-        perror("Erreur, le fichier est vide ou ne peut pas être lu.\n");
-    }
 }
     
     free(elt1);
@@ -192,21 +189,6 @@ void MAJ_Stations(FILE *fic, NoeudAVL *racine) {
     free(elt7);
     free(elt8);
 return;
-    }
-
-// Vérifier si à la lecture de la première ligne il n'y a pas une erreur sinon on libère la mémoire et stop la fonction
-    if (fgets(ligne, sizeof(ligne), fic) == NULL) {
-        perror("Erreur, le fichier est vide ou ne peut pas être lu.\n");
-        rewind(fic);
-        free(elt1);
-        free(elt2);
-        free(elt3);
-        free(elt4);
-        free(elt5);
-        free(elt6);
-        free(elt7);
-        free(elt8);
-        return;
     }
     //remettre curseur
     // Lire chaque ligne du fichier jusqu'à EOF
