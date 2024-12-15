@@ -193,10 +193,12 @@ lancement_C() {
 
     # Vérifier si l'exécutable existe et est accessible
     if [ -x "$EXECUTABLE" ]; then
-        ./$EXECUTABLE > rendu/${arg2}_${arg3}csv
+        ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
+
     else
         make > /dev/null 2>&1
-        ./$EXECUTABLE > rendu/${arg2}_${arg3}csv
+        ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
+
     fi
 }
 
