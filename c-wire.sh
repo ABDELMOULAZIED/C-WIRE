@@ -82,7 +82,7 @@ crea_doss(){
 	doss="tmp"
 	if [ ! -d "$doss" ] ; then
 		mkdir -p "$doss"
-		#sudo mount -t tmpfs -o size=350M tmpfs tmp
+		sudo mount -t tmpfs -o size=350M tmpfs tmp
 	else
 		rm -rf $doss/{*,.*} 2>/dev/null
 	fi
@@ -291,6 +291,7 @@ arg3="$3"
 arg4="$4"
 
 main 4
-#rm "tmp/temp_station.txt"
-#rm "tmp/temp_usager.txt"
+rm "tmp/temp_station.txt"
+rm "tmp/temp_usager.txt"
 sudo umount tmp
+rmdir "tmp"
