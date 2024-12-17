@@ -97,13 +97,7 @@ crea_doss(){
 }
 # Récupération des donnés sur la centrale et ses usagers.
 recup_donne() {
-    # Vérification des arguments 2, 3 et 4 (si nécessaires)
-    if [ -z "$arg2" ] || [ -z "$arg3" ]; then
-        echo "Erreur : Les arguments 2 et 3 doivent être fournis."
-        exit 1
-    fi
-
-    # Construction des expressions régulières en fonction de arg2, arg3 et arg4
+	# Construction des expressions régulières en fonction de arg2, arg3 et arg4
     case "$arg2" in
         "hvb")
             if [ "$arg3" == "comp" ]; then
@@ -155,16 +149,11 @@ recup_donne() {
         usagers_regex="^($arg4);$usagers_regex"
     fi
     
-        # Cas spécifique pour "lv all" où on a besoin de traiter plusieurs usagers
-    if [ "$arg2" == "lv" ] && [ "$arg3" == "all" ]; then
-        usagers_1=$(grep -P "^($arg4);-;-;(\d+);(\d+);-;-;(\d+)" "$arg1")
-        usagers_2=$(grep -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" "$arg1")
-        usagers="${usagers_1}\n${usagers_2}"
-    fi
-	station=$(grep -P "$station_regex" "$arg1")
-	usagers=$(grep -P "$usagers_regex" "$arg1")
 
+	grep -P "$usagers_regex" "$arg1" > tmp/temp_usager.txt
 
+    # Écriture directe des stations dans un fichier temporaire
+    grep -P "$station_regex" "$arg1" > tmp/temp_station.txt
 
 }
 
@@ -193,14 +182,6 @@ timer(){
 	fi
 	
 	 
-}
-
-
-ecriture(){
-    # Directement écrire la variable dans un fichier sans traitement supplémentaire
-    # Cette méthode est rapide et directe
-    cat <<< "$station" > tmp/temp_station.txt
-    cat <<< "$usagers" > tmp/temp_usager.txt
 }
 
 # Fonction pour vérifier et exécuter l'exécutable Main
@@ -261,10 +242,10 @@ barre_de_progression() {
 }
 main(){
 	local start_main=$(date +%s)
-	nombre_total_etapes=5
+	nombre_total_etapes=$1
 	etape_actuelle=0
 	if [[ $activer_efficience == true ]]; then
-		nombre_total_etapes=6
+		nombre_total_etapes+=1
 	fi
 	
 
@@ -280,11 +261,6 @@ main(){
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
 	timer "Durée de la récupération des données" "recup_donne"
-
-
-	etape_actuelle=$((etape_actuelle + 1))
-	barre_de_progression $etape_actuelle $nombre_total_etapes
-	timer "Durée de l'écriture des fichiers temporaires" "ecriture"
 
 
 	etape_actuelle=$((etape_actuelle + 1))
@@ -309,7 +285,7 @@ arg2="$2"
 arg3="$3"
 arg4="$4"
 
-main
+main 4
 rm "tmp/temp_station.txt"
 rm "tmp/temp_usager.txt"
 sudo umount tmp
