@@ -250,10 +250,8 @@ main(){
 	nombre_total_etapes=$1
 	etape_actuelle=0
 	if [[ $activer_efficience == true ]]; then
-		nombre_total_etapes+=1
+		((nombre_total_etapes+=1))
 	fi
-	
-
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
 	timer "Durée de la vérification des arguments" "verif"
@@ -276,7 +274,7 @@ main(){
 	if [[ $activer_efficience == true ]]; then
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
-	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio rendu/${arg2}_${arg3}csv"
+	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio rendu/${arg2}_${arg3}.csv"
 	fi
 	echo "Fin de procédure le fichier final se trouve dans le dossier rendu"
 	
