@@ -81,7 +81,8 @@ verif() {
 crea_doss(){
 	doss="tmp"
 	if [ ! -d "$doss" ] ; then
-		mkdir "$doss"
+		mkdir -p "$doss"
+		sudo mount -t tmpfs -o size=350M tmpfs tmp
 	else
 		rm -rf $doss/{*,.*} 2>/dev/null
 	fi
@@ -95,61 +96,76 @@ crea_doss(){
 	fi
 }
 # Récupération des donnés sur la centrale et ses usagers.
-recup_donne(){
-	arg_fus="$arg2 $arg3"
-	case "$arg_fus" in
-		"hvb comp")
-		if [ -z "$arg4" ];then
-			station=$(grep  -P "^(\d+);(\d+);-;-;-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^(\d+);(\d+);-;-;(\d+);-;-;(\d+)" $arg1)
-		else
-			station=$(grep  -P "^($arg4);(\d+);-;-;-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^($arg4);(\d+);-;-;(\d+);-;-;(\d+)" $arg1)
-		fi
-		;;
-		"hva comp")
-		if [ -z "$arg4" ];then
-			station=$(grep  -P "^(\d+);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^(\d+);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
-		else
-			station=$(grep  -P "^($arg4);(\d+);(\d+);-;-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^($arg4);-;(\d+);-;(\d+);-;-;(\d+)" $arg1)
-		fi
-		;;
-		"lv comp")
-		if [ -z "$arg4" ];then
-			station=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^(\d+);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
-		else
-			station=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^($arg4);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
-		fi
-		;;
-		"lv indiv")
-		if [ -z "$arg4" ];then
-			station=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^(\d+);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
-		else 
-			station=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
-			usagers=$(grep  -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
-		fi
-		;;
-		"lv all")
-		if [ -z "$arg4" ];then
-			station=$(grep  -P "^(\d+);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
-			usagers_1=$(grep  -P "^(\d+);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
-			usagers_2=$(grep  -P "^(\d+);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
-		else
-			station=$(grep  -P "^($arg4);-;(\d+);(\d+);-;-;(\d+);-" $arg1)
-			usagers_1=$(grep  -P "^($arg4);-;-;(\d+);(\d+);-;-;(\d+)" $arg1)
-			usagers_2=$(grep  -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" $arg1)
-		fi
-		usagers="$usagers_1\n$usagers_2"
-		;;
-		*)
-		echo "Erreur : mode $arg_fus non pris en charge."
-		exit -1
-	esac
+recup_donne() {
+    # Vérification des arguments 2, 3 et 4 (si nécessaires)
+    if [ -z "$arg2" ] || [ -z "$arg3" ]; then
+        echo "Erreur : Les arguments 2 et 3 doivent être fournis."
+        exit 1
+    fi
+
+    # Construction des expressions régulières en fonction de arg2, arg3 et arg4
+    case "$arg2" in
+        "hvb")
+            if [ "$arg3" == "comp" ]; then
+                station_regex="^(\d+);(\d+);-;-;-;-;(\d+);-$"
+                usagers_regex="^(\d+);(\d+);-;-;(\d+);-;-;(\d+)"
+            else
+                echo "Erreur : mode $arg2/$arg3 non pris en charge."
+                exit 1
+            fi
+            ;;
+        "hva")
+            if [ "$arg3" == "comp" ]; then
+                station_regex="^(\d+);(\d+);(\d+);-;-;-;(\d+);-$"
+                usagers_regex="^(\d+);-;(\d+);-;(\d+);-;-;(\d+)"
+            else
+                echo "Erreur : mode $arg2/$arg3 non pris en charge."
+                exit 1
+            fi
+            ;;
+        "lv")
+            case "$arg3" in
+                "comp")
+                    station_regex="^(\d+);-;(\d+);(\d+);-;-;(\d+);-$"
+                    usagers_regex="^(\d+);-;-;(\d+);(\d+);-;-;(\d+)"
+                    ;;
+                "indiv")
+                    station_regex="^(\d+);-;(\d+);(\d+);-;-;(\d+);-$"
+                    usagers_regex="^(\d+);-;-;(\d+);-;(\d+);-;(\d+)"
+                    ;;
+                "all")
+                    station_regex="^(\d+);-;(\d+);(\d+);-;-;(\d+);-$"
+                    usagers_regex="^(\d+);-;-;(\d+);(\d+);-;-;(\d+)|^(\d+);-;-;(\d+);-;(\d+);-;(\d+)"
+                    ;;
+                *)
+                    echo "Erreur : mode $arg2/$arg3 non pris en charge."
+                    exit 1
+                    ;;
+            esac
+            ;;
+        *)
+            echo "Erreur : mode $arg2/$arg3 non pris en charge."
+            exit 1
+            ;;
+    esac
+
+    # Si un argument 4 est passé, on l'intègre dans les regex pour une recherche plus précise
+    if [ -n "$arg4" ]; then
+        station_regex="^($arg4);$station_regex"
+        usagers_regex="^($arg4);$usagers_regex"
+    fi
+    
+        # Cas spécifique pour "lv all" où on a besoin de traiter plusieurs usagers
+    if [ "$arg2" == "lv" ] && [ "$arg3" == "all" ]; then
+        usagers_1=$(grep -P "^($arg4);-;-;(\d+);(\d+);-;-;(\d+)" "$arg1")
+        usagers_2=$(grep -P "^($arg4);-;-;(\d+);-;(\d+);-;(\d+)" "$arg1")
+        usagers="${usagers_1}\n${usagers_2}"
+    fi
+	station=$(grep -P "$station_regex" "$arg1")
+	usagers=$(grep -P "$usagers_regex" "$arg1")
+
+
+
 }
 
 # Calcul le temps d'exécution d'une fonction passé en paramètre
@@ -181,9 +197,10 @@ timer(){
 
 
 ecriture(){
-    cat > tmp/temp_station.txt <<< "$station"
-    cat > tmp/temp_usager.txt <<< "$usagers"	
-
+    # Directement écrire la variable dans un fichier sans traitement supplémentaire
+    # Cette méthode est rapide et directe
+    cat <<< "$station" > tmp/temp_station.txt
+    cat <<< "$usagers" > tmp/temp_usager.txt
 }
 
 # Fonction pour vérifier et exécuter l'exécutable Main
@@ -197,8 +214,8 @@ lancement_C() {
 
     else
         cd codeC
-	make > /dev/null 2>&1
- 	cd..
+        make > /dev/null 2>&1
+        cd ..
         ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
 
     fi
@@ -293,4 +310,6 @@ arg3="$3"
 arg4="$4"
 
 main
-
+rm "tmp/temp_station.txt"
+rm "tmp/temp_usager.txt"
+sudo umount tmp
