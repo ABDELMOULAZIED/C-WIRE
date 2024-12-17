@@ -196,7 +196,7 @@ lancement_C() {
         ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
 
     else
-        make > /dev/null 2>&1
+        codeC/make > /dev/null 2>&1
         ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
 
     fi
