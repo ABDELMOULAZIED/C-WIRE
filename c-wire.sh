@@ -3,33 +3,41 @@
 
 # Fonction d'aide
 aide() {
-    echo "Usage: $0 [OPTIONS][FICHIER][STATION][CONSOMMATEUR][ID CENTRALE]"
+    echo "Usage : $0 [OPTIONS] [FICHIER] [STATION] [CONSOMMATEUR] [ID CENTRALE]"
     echo "Options :"
-    echo -e "  -h    Affiche ce message d'aide et arrête l'exécution\n  -e   Ajout du rapport d'efficience"
+    echo -e "  -h    Affiche ce message d'aide et arrête l'exécution\n  -e    Ajoute le rapport d'efficience\n  -i    Trie le fichier de rendu par identifiant de station\n  -c    Trie le fichier de rendu par la consommation des stations"
     echo "Fichier :"
     echo "   Fichier .dat existant requis"
     echo "Station :"
-    echo -e "   Indiquer le type de station a étudier :\n   hvb : Station de haut voltage B\n   hva : Station de haut voltage A\n   lv : Station de faible voltage"
+    echo -e "   Indiquer le type de station à étudier :\n   hvb : Station de haut voltage B\n   hva : Station de haut voltage A\n   lv : Station de faible voltage"
     echo "Consommateur :"
-    echo -e "   Indiquer le type de consommateur a étudier :\n   comp : Entreprises\n   indiv : Particuliers\n   all : Particuliers et Entreprises\n   A noter que les stations de haut voltage ne sont pas connecté aux particuliers."
+    echo -e "   Indiquer le type de consommateur à étudier :\n   comp : Entreprises\n   indiv : Particuliers\n   all : Particuliers et Entreprises\n   À noter que les stations de haut voltage ne sont pas connectées aux particuliers."
     echo "Id Centrale :"
-    echo -e "   Indiquer un identifiant de centrale, l'option est optionnelle et doit être un numéro x compris entre 0<x<n où n est le nombre de centrale."
+    echo -e "   Indiquer un identifiant de centrale, l'option est optionnelle et doit être un numéro x compris entre 0 < x < n où n est le nombre de centrales."
     
     exit 1
-
 }
 
 
 
 
+
 activer_efficience=false
-    while getopts ":eh" opt; do
+tri=""
+    while getopts ":ehaci" opt; do
         case $opt in
             e)
                 activer_efficience=true
+                tri="eff"
                 ;;
             h)
             	aide
+            	;;
+            c)
+            	tri="conso"
+            	;;
+            i)
+            	tri="id"
             	;;
             \?)
                 echo "Option invalide : -$OPTARG" >&2
@@ -95,6 +103,7 @@ crea_doss(){
 		mkdir "$doss"
 	fi
 }
+
 # Récupération des donnés sur la centrale et ses usagers.
 recup_donne() {
 	# Construction des expressions régulières en fonction de arg2, arg3 et arg4
@@ -153,12 +162,8 @@ recup_donne() {
     		usagers_regex="^$arg4;${usagers_regex#*;}"
     	fi
     fi
-
-
-	grep -P "$usagers_regex" "$arg1" > tmp/temp_usager.txt
-
-    # Écriture directe des stations dans un fichier temporaire
     grep -P "$station_regex" "$arg1" > tmp/temp_station.txt
+    grep -P "$usagers_regex" "$arg1" > tmp/temp_usager.txt
 
 }
 
@@ -191,25 +196,41 @@ timer(){
 
 # Fonction pour vérifier et exécuter l'exécutable Main
 lancement_C() {
-    # Nom de l'exécutable
     EXECUTABLE="codeC/Main"
-
     # Vérifier si l'exécutable existe et est accessible
     if [ -x "$EXECUTABLE" ]; then
-        ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
-
+    	case "$tri" in 
+    	"id")
+    	    ./$EXECUTABLE | sort -t: -k1,1n > "rendu/${arg2}_${arg3}.csv"
+    	    ;;
+    	"conso")
+    	    ./$EXECUTABLE | sort -t: -k3,3n > "rendu/${arg2}_${arg3}.csv"
+    	    ;;
+    	*)
+    	    ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
+    	    ;;
+    	esac
     else
         cd codeC
         make > /dev/null 2>&1
         cd ..
-        ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
+        case "$tri" in 
+    	"id")
+    	    ./$EXECUTABLE | sort -t: -k1,1n > "rendu/${arg2}_${arg3}.csv"
+    	    ;;
+    	"conso")
+    	    ./$EXECUTABLE | sort -t: -k3,3n > "rendu/${arg2}_${arg3}.csv"
+    	    ;;
+    	*)
+    	    ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
+    	    ;;
+    	esac
 
     fi
 }
 
 ajouter_colonne_ratio() {
     fichier="$1"
-    # Vérification si le fichier existe
     if [ ! -f "$fichier" ]; then
         echo "Erreur : Le fichier '$fichier' n'existe pas."
         return 1
@@ -224,6 +245,9 @@ ajouter_colonne_ratio() {
         }
         print $1 ":" $2 ":" $3 ":" ratio
     }' "$fichier" > "$fichier.temp" && mv "$fichier.temp" "$fichier"
+    
+    # Trier par la 4ème colonne après avoir ajouté la colonne "ratio"
+    sort -t: -k4,4n "$fichier" > "$fichier.temp" && mv "$fichier.temp" "$fichier"
 }
 
 barre_de_progression() {
