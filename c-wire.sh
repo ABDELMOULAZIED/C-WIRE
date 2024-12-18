@@ -198,16 +198,17 @@ timer(){
 lancement_C() {
     EXECUTABLE="codeC/Main"
     # Vérifier si l'exécutable existe et est accessible
+    echo "ID:CAPACITE:CONSOMMATION:(OPTION EFFICIENCE)" > rendu/${arg2}_${arg3}.csv
     if [ -x "$EXECUTABLE" ]; then
     	case "$tri" in 
     	"id")
-    	    ./$EXECUTABLE | sort -t: -k1,1n > "rendu/${arg2}_${arg3}.csv"
+    	    ./$EXECUTABLE | sort -t: -k1,1n >> "rendu/${arg2}_${arg3}.csv"
     	    ;;
     	"conso")
-    	    ./$EXECUTABLE | sort -t: -k3,3n > "rendu/${arg2}_${arg3}.csv"
+    	    ./$EXECUTABLE | sort -t: -k3,3n >> "rendu/${arg2}_${arg3}.csv"
     	    ;;
     	*)
-    	    ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
+    	    ./$EXECUTABLE | sort -t: -k2,2n >> "rendu/${arg2}_${arg3}.csv"
     	    ;;
     	esac
     else
@@ -216,13 +217,13 @@ lancement_C() {
         cd ..
         case "$tri" in 
     	"id")
-    	    ./$EXECUTABLE | sort -t: -k1,1n > "rendu/${arg2}_${arg3}.csv"
+    	    ./$EXECUTABLE | sort -t: -k1,1n >> "rendu/${arg2}_${arg3}.csv"
     	    ;;
     	"conso")
-    	    ./$EXECUTABLE | sort -t: -k3,3n > "rendu/${arg2}_${arg3}.csv"
+    	    ./$EXECUTABLE | sort -t: -k3,3n >> "rendu/${arg2}_${arg3}.csv"
     	    ;;
     	*)
-    	    ./$EXECUTABLE | sort -t: -k2,2n > "rendu/${arg2}_${arg3}.csv"
+    	    ./$EXECUTABLE | sort -t: -k2,2n >> "rendu/${arg2}_${arg3}.csv"
     	    ;;
     	esac
 
