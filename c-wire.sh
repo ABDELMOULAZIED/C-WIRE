@@ -94,7 +94,7 @@ crea_doss(){
 	doss="tmp"
 	if [ ! -d "$doss" ] ; then
 		mkdir -p "$doss"
-		sudo mount -t tmpfs -o size=350M tmpfs tmp
+		#sudo mount -t tmpfs -o size=350M tmpfs tmp
 	else
 		rm -rf $doss/{*,.*} 2>/dev/null
 	fi
