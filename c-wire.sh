@@ -94,7 +94,7 @@ crea_doss(){
 	doss="tmp"
 	if [ ! -d "$doss" ] ; then
 		mkdir -p "$doss"
-		#sudo mount -t tmpfs -o size=350M tmpfs tmp
+		sudo mount -t tmpfs -o size=350M tmpfs tmp //récuperer taille fichier pour adapter et vérifier le retour 
 	else
 		rm -rf $doss/{*,.*} 2>/dev/null
 	fi
@@ -158,7 +158,7 @@ recup_donne() {
             ;;
     esac
 
-    # Si un argument 4 est passé, on l'intègre dans les regex pour une recherche plus précise
+    # Si un argument 4 est passé, on l'intègre dans les regex pour une recherche plus précise  /// c'est ici le souci
     if [ -n "$arg4" ]; then
     	if [ "$arg2" == "lv" ] && [ "$arg3" == "all" ]; then
     		station_regex="^$arg4;${station_regex#*;}"
@@ -265,9 +265,9 @@ lv_all_max_min(){
 			echo "Erreur : Le fichier '$fichier' n'existe pas."
 			return 1
 		fi
-	echo "$(sort -t: -k3,3n "$fichier" | head -n 10)" > rendu/lv_all_min_max.txt 
-	echo "" >> rendu/lv_all_min_max.txt
-	echo "$(sort -t: -k3,3n "$fichier" | tail -n 10)" >> rendu/lv_all_min_max.txt
+	echo "$(sort -t: -k3,3n "$fichier" | head -n 11)" > rendu/lv_all_min_max 
+	
+	echo "$(sort -t: -k3,3n "$fichier" | tail -n 10)" >> rendu/lv_all_min_max 
 	fi	
 			
 
@@ -292,6 +292,38 @@ barre_de_progression() {
 
     # Afficher la barre de progression
     printf "\r[%s] %d%% " "$barre" "$progression"
+}
+generer_graphes() {
+    gnuplot <<EOF
+set terminal pngcairo size 2400,700 enhanced font 'Arial,12'
+set output 'graphs/combined_consumers.png'
+
+set multiplot layout 1,2 title "Comparaison des 10 plus gros et petits consommateurs"
+
+set xlabel "ID"
+set ylabel "Valeur"
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid border -1
+set boxwidth 0.8
+set key outside
+set datafile separator ":"
+set xtics rotate by -45 font ",10"
+
+stats 'rendu/lv_all_min_max' using 2 nooutput
+max_y = STATS_max
+set yrange [0:max_y]
+
+set title "10 plus petits consommateurs"
+plot 'rendu/lv_all_min_max' every ::0::10 using 2:xtic(1) title "Capacité" lc rgb "orange", \
+     '' every ::0::10 using 3 title "Consommation" lc rgb "green"
+
+set title "10 plus gros consommateurs"
+plot 'rendu/lv_all_min_max' every ::11::20 using 2:xtic(1) title "Capacité" lc rgb "orange", \
+     '' every ::11::20 using 3 title "Consommation" lc rgb "red"
+
+unset multiplot
+EOF
 }
 main(){
 	local start_main=$(date +%s)
@@ -342,6 +374,8 @@ arg3="$3"
 arg4="$4"
 
 main 5
+generer_graphes
+
 #rm "tmp/temp_station.txt"
 #rm "tmp/temp_usager.txt"
 #sudo umount tmp
