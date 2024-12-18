@@ -91,7 +91,8 @@ Affiche une aide détaillée sur l’utilisation du script, incluant la descript
         - Identifiant du poste LV
         - Capacité en kWh
         - Consommation totale des consommateurs en kWh
-![[c-wire2.jpg]]
+![c-wire2](https://github.com/user-attachments/assets/21fbabe7-29f6-4e0e-b007-8846a6a010e8)
+
 
 
 #### Exemple 2 : Analyser les Postes LV pour Tous les Consommateurs dans une Centrale Spécifique (ID Centrale : 2) 
@@ -108,7 +109,8 @@ Affiche une aide détaillée sur l’utilisation du script, incluant la descript
         - Identifiant du poste LV
         - Capacité en kWh
         - Consommation totale des consommateurs en kWh
-![[c-wire3.jpg]]
+![c-wire3](https://github.com/user-attachments/assets/6e07841a-efd6-4159-8c28-2df574ff445d)
+
 
 #### Exemple 3 : Analyser les Postes LV pour Tous les Consommateurs avec Rapport d’Efficience
 
@@ -130,7 +132,7 @@ Affiche une aide détaillée sur l’utilisation du script, incluant la descript
     - Avec l’option `-e` :
         - Création du fichier `lv_all_minmax.csv` dans `rendu/`, listant les 10 postes LV les plus et les 10 postes LV les moins consommés.
         - Génération des graphiques correspondants dans le dossier `graphs/`, illustrant ces postes avec des couleurs indiquant la surconsommation (rouge) ou la marge (vert).
-![[c-wire4.jpg]]
+![c-wire4](https://github.com/user-attachments/assets/f2fbdf8c-e209-49d8-aade-7a69076fcb70)
 
 ### Vérifier les Résultats
 
@@ -140,7 +142,7 @@ Affiche une aide détaillée sur l’utilisation du script, incluant la descript
 2. **Consulter un Fichier de Sortie**
     Par exemple, pour afficher le contenu de `lv_all.csv`, exécutez :
     `cat lv_all.csv`
-    ![[c-wire5.jpg]]
+![c-wire5](https://github.com/user-attachments/assets/2d657ab1-eb9f-4330-b8e7-5674417fede1)
 3. **Visualiser les Graphiques (si l’option `-e` est utilisée)**
     Les graphiques sont générés dans le dossier `graphs/` si l’option `-e` a été utilisée. Vous pouvez les ouvrir avec votre visualiseur d'images préféré ou en utilisant GnuPlot. Par exemple :
     `gnuplot graphs/lv_all_minmax_2.gp`
