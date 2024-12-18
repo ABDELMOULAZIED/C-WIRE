@@ -73,7 +73,8 @@ Affiche une aide détaillée sur l’utilisation du script, incluant la descript
 
 - Description détaillée de l’utilisation du script.
 - Explication des paramètres et des options disponibles.
-![[c-wire1.jpg]]
+![c-wire1](https://github.com/user-attachments/assets/80a71723-9559-4dc2-9f98-42bd8d51a4ac)
+
 
 #### Exemple 1 : Analyser les Postes LV pour Tous les Consommateurs
 
