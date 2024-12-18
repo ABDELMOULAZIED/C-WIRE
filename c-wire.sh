@@ -87,6 +87,10 @@ verif() {
 
 # Création des dossiers utile au programme
 crea_doss(){
+	doss="test"
+	if [ ! -d "$doss" ] ; then
+		mkdir "$doss"
+	fi
 	doss="tmp"
 	if [ ! -d "$doss" ] ; then
 		mkdir -p "$doss"
@@ -101,6 +105,8 @@ crea_doss(){
 	doss="rendu"
 	if [ ! -d "$doss" ] ; then
 		mkdir "$doss"
+	else
+		mv $doss/* test
 	fi
 }
 
@@ -251,6 +257,23 @@ ajouter_colonne_ratio() {
     sort -t: -k4,4n "$fichier" > "$fichier.temp" && mv "$fichier.temp" "$fichier"
 }
 
+
+lv_all_max_min(){
+	fichier=$1
+	if [[  "$arg2" == "lv" && "$arg3" == "all" ]]; then
+		if [ ! -f "$fichier" ]; then
+			echo "Erreur : Le fichier '$fichier' n'existe pas."
+			return 1
+		fi
+	echo "$(sort -t: -k3,3n "$fichier" | head -n 10)" > rendu/lv_all_min_max 
+	echo "" >> rendu/lv_all_min_max 
+	echo "$(sort -t: -k3,3n "$fichier" | tail -n 10)" >> rendu/lv_all_min_max 
+	fi	
+			
+
+
+}
+
 barre_de_progression() {
     local nombre_total_etapes="$2"
     local etape_actuelle="$1"
@@ -301,8 +324,13 @@ main(){
 	barre_de_progression $etape_actuelle $nombre_total_etapes
 	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio rendu/${arg2}_${arg3}.csv"
 	fi
-	echo "Fin de procédure le fichier final se trouve dans le dossier rendu"
 	
+	
+	etape_actuelle=$((etape_actuelle + 1))
+	barre_de_progression $etape_actuelle $nombre_total_etapes
+	timer "LV all min max " "lv_all_max_min rendu/${arg2}_${arg3}.csv"
+	
+	echo "Fin de procédure le fichier final se trouve dans le dossier rendu"
 	local end_main=$(date +%s)
 	duree=$(echo "$end_main - $start_main " | bc)
 		echo "Durée du Script Shell : $duree secondes"
@@ -313,8 +341,8 @@ arg2="$2"
 arg3="$3"
 arg4="$4"
 
-main 4
-rm "tmp/temp_station.txt"
-rm "tmp/temp_usager.txt"
-sudo umount tmp
-rmdir "tmp"
+main 5
+#rm "tmp/temp_station.txt"
+#rm "tmp/temp_usager.txt"
+#sudo umount tmp
+#rmdir "tmp"
