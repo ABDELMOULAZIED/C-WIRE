@@ -265,9 +265,9 @@ lv_all_max_min(){
 			echo "Erreur : Le fichier '$fichier' n'existe pas."
 			return 1
 		fi
-	echo "$(sort -t: -k3,3n "$fichier" | head -n 10)" > rendu/lv_all_min_max 
-	echo "" >> rendu/lv_all_min_max 
-	echo "$(sort -t: -k3,3n "$fichier" | tail -n 10)" >> rendu/lv_all_min_max 
+	echo "$(sort -t: -k3,3n "$fichier" | head -n 10)" > rendu/lv_all_min_max.txt 
+	echo "" >> rendu/lv_all_min_max.txt
+	echo "$(sort -t: -k3,3n "$fichier" | tail -n 10)" >> rendu/lv_all_min_max.txt
 	fi	
 			
 
