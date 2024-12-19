@@ -244,7 +244,8 @@ ajouter_colonne_ratio() {
     fi
 
     # Traitement avec awk pour ajouter la 4ème colonne (ratio), en utilisant ':' comme séparateur
-    awk -F: '{ 
+    awk -F: 'NR == 1 { print; next }
+    { 
         if ($2 != 0) {
             ratio = $3 / $2
         } else {
@@ -265,9 +266,9 @@ lv_all_max_min(){
 			echo "Erreur : Le fichier '$fichier' n'existe pas."
 			return 1
 		fi
-	echo "$(sort -t: -k3,3n "$fichier" | head -n 11)" > rendu/lv_all_min_max 
+	echo "$(sort -t: -k3,3n "$fichier" | head -n 11)" > rendu/lv_all_min_max.csv
 	
-	echo "$(sort -t: -k3,3n "$fichier" | tail -n 10)" >> rendu/lv_all_min_max 
+	echo "$(sort -t: -k3,3n "$fichier" | tail -n 10)" >> rendu/lv_all_min_max.csv
 	fi	
 			
 
@@ -310,16 +311,16 @@ set key outside
 set datafile separator ":"
 set xtics rotate by -45 font ",10"
 
-stats 'rendu/lv_all_min_max' using 2 nooutput
+stats 'rendu/lv_all_min_max.csv' using 2 nooutput
 max_y = STATS_max
 set yrange [0:max_y]
 
 set title "10 plus petits consommateurs"
-plot 'rendu/lv_all_min_max' every ::0::10 using 2:xtic(1) title "Capacité" lc rgb "orange", \
+plot 'rendu/lv_all_min_max.csv' every ::0::10 using 2:xtic(1) title "Capacité" lc rgb "orange", \
      '' every ::0::10 using 3 title "Consommation" lc rgb "green"
 
 set title "10 plus gros consommateurs"
-plot 'rendu/lv_all_min_max' every ::11::20 using 2:xtic(1) title "Capacité" lc rgb "orange", \
+plot 'rendu/lv_all_min_max.csv' every ::11::20 using 2:xtic(1) title "Capacité" lc rgb "orange", \
      '' every ::11::20 using 3 title "Consommation" lc rgb "red"
 
 unset multiplot
@@ -357,10 +358,14 @@ main(){
 	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio rendu/${arg2}_${arg3}.csv"
 	fi
 	
-	
-	etape_actuelle=$((etape_actuelle + 1))
-	barre_de_progression $etape_actuelle $nombre_total_etapes
-	timer "LV all min max " "lv_all_max_min rendu/${arg2}_${arg3}.csv"
+	if [[ $arg2 == "lv" && $arg3 == "all" ]]; then
+		etape_actuelle=$((etape_actuelle + 1))
+		barre_de_progression $etape_actuelle $nombre_total_etapes
+		timer "Création des 10 LV min et max" "lv_all_max_min rendu/${arg2}_${arg3}.csv"
+		etape_actuelle=$((etape_actuelle + 1))
+		barre_de_progression $etape_actuelle $nombre_total_etapes
+		timer "Création du graphique des 10 LV min et max" "generer_graphes"
+	fi
 	
 	echo "Fin de procédure le fichier final se trouve dans le dossier rendu"
 	local end_main=$(date +%s)
@@ -373,8 +378,11 @@ arg2="$2"
 arg3="$3"
 arg4="$4"
 
-main 5
-generer_graphes
+if [[ $arg2 == "lv" && $arg3 == "all" ]]; then
+	main 6
+else
+	main 4
+fi
 
 #rm "tmp/temp_station.txt"
 #rm "tmp/temp_usager.txt"
