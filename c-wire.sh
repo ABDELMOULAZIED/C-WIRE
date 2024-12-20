@@ -204,12 +204,12 @@ timer(){
 lancement_C() {
     EXECUTABLE="codeC/Main"
     if [ -n "$arg4" ]; then
-        output="rendu/${arg2}_${arg3}_${arg4}.csv"
+        sortie="rendu/${arg2}_${arg3}_${arg4}.csv"
     else
-        output="rendu/${arg2}_${arg3}.csv"
+        sortie="rendu/${arg2}_${arg3}.csv"
     fi
     # Vérifier si l'exécutable existe et est accessible
-    if [ "$activer_efficience" == "true" ]; then echo "STATION $arg2 : CAPACITE : CONSOMMATION $arg3 : (OPTION EFFICIENCE)" > $output; else echo "STATION $arg2 : CAPACITE : CONSOMMATION $arg3" > $output; fi
+    if [ "$activer_efficience" == "true" ]; then echo "STATION $arg2 : CAPACITE : CONSOMMATION $arg3 : (OPTION EFFICIENCE)" > $sortie; else echo "STATION $arg2 : CAPACITE : CONSOMMATION $arg3" > $sortie; fi
     if [ -x "$EXECUTABLE" ]; then
     	:
     else
@@ -219,13 +219,13 @@ lancement_C() {
     fi
 	case "$tri" in 
     	"id")
-    	    ./$EXECUTABLE | sort -t: -k1,1n >> $output
+    	    ./$EXECUTABLE | sort -t: -k1,1n >> $sortie
     	    ;;
     	"conso")
-    	    ./$EXECUTABLE | sort -t: -k3,3n >> $output
+    	    ./$EXECUTABLE | sort -t: -k3,3n >> $sortie
     	    ;;
     	*)
-    	    ./$EXECUTABLE | sort -t: -k2,2n >> $output
+    	    ./$EXECUTABLE | sort -t: -k2,2n >> $sortie
 	;;
 	esac
     	
@@ -294,7 +294,7 @@ barre_de_progression() {
 generer_graphes() {
     gnuplot <<EOF
 set terminal pngcairo size 2400,700 enhanced font 'Arial,12'
-set output 'graphs/combined_consumers.png'
+set sortie 'graphs/combined_consumers.png'
 
 set multiplot layout 1,2 title "Comparaison des 10 plus gros et petits consommateurs"
 
@@ -308,7 +308,7 @@ set key outside
 set datafile separator ":"
 set xtics rotate by -45 font ",10"
 
-stats 'rendu/lv_all_min_max.csv' using 2 nooutput
+stats 'rendu/lv_all_min_max.csv' using 2 nosortie
 max_y = STATS_max
 set yrange [0:max_y]
 
@@ -358,13 +358,13 @@ main(){
 	if [[ $activer_efficience == true ]]; then
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
-	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio $output"
+	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio $sortie"
 	fi
 	
 	if [[ $arg2 == "lv" && $arg3 == "all" ]]; then
 		etape_actuelle=$((etape_actuelle + 1))
 		barre_de_progression $etape_actuelle $nombre_total_etapes
-		timer "Création des 10 LV min et max" "lv_all_max_min $output"
+		timer "Création des 10 LV min et max" "lv_all_max_min $sortie"
 		etape_actuelle=$((etape_actuelle + 1))
 		barre_de_progression $etape_actuelle $nombre_total_etapes
 		timer "Création du graphique des 10 LV min et max" "generer_graphes"
