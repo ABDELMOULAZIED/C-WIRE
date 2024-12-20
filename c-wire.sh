@@ -294,7 +294,7 @@ barre_de_progression() {
 generer_graphes() {
     gnuplot <<EOF
 set terminal pngcairo size 2400,700 enhanced font 'Arial,12'
-set sortie 'graphs/combined_consumers.png'
+set output 'graphs/combined_consumers.png'
 
 set multiplot layout 1,2 title "Comparaison des 10 plus gros et petits consommateurs"
 
@@ -308,7 +308,7 @@ set key outside
 set datafile separator ":"
 set xtics rotate by -45 font ",10"
 
-stats 'rendu/lv_all_min_max.csv' using 2 nosortie
+stats 'rendu/lv_all_min_max.csv' using 2 nooutput
 max_y = STATS_max
 set yrange [0:max_y]
 
