@@ -86,27 +86,27 @@ verif() {
 }
 
 # Création des dossiers utile au programme
-crea_doss(){
-	doss="test"
-	if [ ! -d "$doss" ] ; then
-		mkdir "$doss"
+crea_dossier(){
+	dossier="test"
+	if [ ! -d "$dossier" ] ; then
+		mkdir "$dossier"
 	fi
-	doss="tmp"
-	if [ ! -d "$doss" ] ; then
-		mkdir -p "$doss"
+	dossier="tmp"
+	if [ ! -d "$dossier" ] ; then
+		mkdir -p "$dossier"
 		sudo mount -t tmpfs -o size=350M tmpfs tmp #récuperer taille fichier pour adapter et vérifier le retour 
 	else
-		rm -rf $doss/{*,.*} 2>/dev/null
+		rm -rf $dossier/{*,.*} 2>/dev/null
 	fi
-	doss="graphs"
-	if [ ! -d "$doss" ] ; then
-		mkdir "$doss"
+	dossier="graphs"
+	if [ ! -d "$dossier" ] ; then
+		mkdir "$dossier"
 	fi
-	doss="rendu"
-	if [ ! -d "$doss" ] ; then
-		mkdir "$doss"
-	else
-		mv $doss/* test
+	dossier="rendu"
+	if [ ! -d "$dossier" ] ; then
+		mkdir "$dossier"
+	elif [ "$(find "$dossier" -mindepth 1 -print -quit 2>/dev/null)" ]; then
+		mv "$dossier"/* test
 	fi
 }
 
@@ -203,37 +203,32 @@ timer(){
 # Fonction pour vérifier et exécuter l'exécutable Main
 lancement_C() {
     EXECUTABLE="codeC/Main"
-    # Vérifier si l'exécutable existe et est accessible
-    echo "ID:CAPACITE:CONSOMMATION:(OPTION EFFICIENCE)" > rendu/${arg2}_${arg3}.csv
-    if [ -x "$EXECUTABLE" ]; then
-    	case "$tri" in 
-    	"id")
-    	    ./$EXECUTABLE | sort -t: -k1,1n >> "rendu/${arg2}_${arg3}.csv"
-    	    ;;
-    	"conso")
-    	    ./$EXECUTABLE | sort -t: -k3,3n >> "rendu/${arg2}_${arg3}.csv"
-    	    ;;
-    	*)
-    	    ./$EXECUTABLE | sort -t: -k2,2n >> "rendu/${arg2}_${arg3}.csv"
-    	    ;;
-    	esac
+    if [ -n "$arg4" ]; then
+        output="rendu/${arg2}_${arg3}_${arg4}.csv"
     else
-        cd codeC
+        output="rendu/${arg2}_${arg3}.csv"
+    fi
+    # Vérifier si l'exécutable existe et est accessible
+    if [ "$activer_efficience" == "true" ]; then echo "STATION $arg2 : CAPACITE : CONSOMMATION $arg3 : (OPTION EFFICIENCE)" > $output; else echo "STATION $arg2 : CAPACITE : CONSOMMATION $arg3" > $output; fi
+    if [ -x "$EXECUTABLE" ]; then
+    	:
+    else
+    	cd codeC
         make > /dev/null 2>&1
         cd ..
-        case "$tri" in 
+    fi
+	case "$tri" in 
     	"id")
-    	    ./$EXECUTABLE | sort -t: -k1,1n >> "rendu/${arg2}_${arg3}.csv"
+    	    ./$EXECUTABLE | sort -t: -k1,1n >> $output
     	    ;;
     	"conso")
-    	    ./$EXECUTABLE | sort -t: -k3,3n >> "rendu/${arg2}_${arg3}.csv"
+    	    ./$EXECUTABLE | sort -t: -k3,3n >> $output
     	    ;;
     	*)
-    	    ./$EXECUTABLE | sort -t: -k2,2n >> "rendu/${arg2}_${arg3}.csv"
-    	    ;;
-    	esac
-
-    fi
+    	    ./$EXECUTABLE | sort -t: -k2,2n >> $output
+	;;
+	esac
+    	
 }
 
 ajouter_colonne_ratio() {
@@ -266,9 +261,9 @@ lv_all_max_min(){
 			echo "Erreur : Le fichier '$fichier' n'existe pas."
 			return 1
 		fi
-	echo "$(sort -t: -k3,3n "$fichier" | head -n 11)" > rendu/lv_all_min_max.csv
+	echo "$(sort -t: -k4,4n "$fichier" | head -n 11)" > rendu/lv_all_min_max.csv
 	
-	echo "$(sort -t: -k3,3n "$fichier" | tail -n 10)" >> rendu/lv_all_min_max.csv
+	echo "$(sort -t: -k4,4n "$fichier" | tail -n 10)" >> rendu/lv_all_min_max.csv
 	fi	
 			
 
@@ -294,6 +289,8 @@ barre_de_progression() {
     # Afficher la barre de progression
     printf "\r[%s] %d%% " "$barre" "$progression"
 }
+
+
 generer_graphes() {
     gnuplot <<EOF
 set terminal pngcairo size 2400,700 enhanced font 'Arial,12'
@@ -326,10 +323,16 @@ plot 'rendu/lv_all_min_max.csv' every ::11::20 using 2:xtic(1) title "Capacité"
 unset multiplot
 EOF
 }
+
+
 main(){
 	local start_main=$(date +%s)
 	nombre_total_etapes=$1
 	etape_actuelle=0
+	if [[ $arg2 == "lv" && $arg3 == "all" ]]; then
+		activer_efficience=true
+	fi
+
 	if [[ $activer_efficience == true ]]; then
 		((nombre_total_etapes+=1))
 	fi
@@ -339,7 +342,7 @@ main(){
 
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
-	timer "Durée de la création des dossiers" "crea_doss"
+	timer "Durée de la création des dossieriers" "crea_dossier"
 
 
 	etape_actuelle=$((etape_actuelle + 1))
@@ -355,13 +358,13 @@ main(){
 	if [[ $activer_efficience == true ]]; then
 	etape_actuelle=$((etape_actuelle + 1))
 	barre_de_progression $etape_actuelle $nombre_total_etapes
-	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio rendu/${arg2}_${arg3}.csv"
+	timer "Ajout du rapport d'efficience" "ajouter_colonne_ratio $output"
 	fi
 	
 	if [[ $arg2 == "lv" && $arg3 == "all" ]]; then
 		etape_actuelle=$((etape_actuelle + 1))
 		barre_de_progression $etape_actuelle $nombre_total_etapes
-		timer "Création des 10 LV min et max" "lv_all_max_min rendu/${arg2}_${arg3}.csv"
+		timer "Création des 10 LV min et max" "lv_all_max_min $output"
 		etape_actuelle=$((etape_actuelle + 1))
 		barre_de_progression $etape_actuelle $nombre_total_etapes
 		timer "Création du graphique des 10 LV min et max" "generer_graphes"
